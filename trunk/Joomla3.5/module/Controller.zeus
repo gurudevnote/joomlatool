@@ -1,0 +1,38 @@
+﻿##|TYPE Function
+##|UNIQUEID ac0272ab-d94f-4f7b-b47b-ad543e3e3017
+##|TITLE Module controller
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+public void CreateModuleController(string path)
+{
+	output.clear();
+%><?php
+/**
+ * @package		Joomla.Site
+ * @subpackage	mod_slideshowandalbum
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+// no direct access
+defined('_JEXEC') or die;
+
+// Include the syndicate functions only once
+require_once dirname(__FILE__).'/helper.php';
+require JModuleHelper::getLayoutPath('<%=FullModuleName%>', $params->get('layout', 'default'));
+<%
+	output.save(path, "o");
+	output.clear();	
+}
+%>
+##|BODY_END

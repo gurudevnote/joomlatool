@@ -1,0 +1,1 @@
+%WINDIR%\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe E:/Setups/source/MyGeneration_new/mymeta/bin/Debug/MyMeta.dll /unregister

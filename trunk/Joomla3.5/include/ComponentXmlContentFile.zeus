@@ -1,0 +1,139 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE CreateSqlInstallFile
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+//**************************************** Get content of xml component file ****************************
+	public void GetComponentXmlContentFile(string componentName, string authorName, string authorEmail, List<string> siteFiles, List<string> adminFiles)
+	{		
+	
+%><?xml version="1.0" encoding="utf-8"?>
+<extension type="component"  version="1.7" method="upgrade">
+	<name><%=componentName%></name>
+	<creationDate><%=DateTime.Now.ToString()%></creationDate>
+	<author><%=authorName%></author>
+	<authorEmail><%=authorEmail%></authorEmail>
+	<authorUrl>http://huuhuy.info</authorUrl>
+	<copyright>Copyright Info</copyright>
+	<license>License Info</license>	
+	<version>0.0.1</version>
+	<description>Description of the <%=componentName%> component ...</description>
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+		</schemas>
+	</update>
+	<install> <!-- Runs on install -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall> <!-- Runs on uninstall -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>	
+	<files folder="site"><%
+			foreach(string file in siteFiles)
+			{
+				//don't include language folder to component
+				if(IsExcludeFolder(file))
+				{
+					continue;
+				}
+		%>
+		<filename><%=file%></filename><%		
+			}
+			foreach(string folder in SiteFolderSubDirs)
+			{
+				if(folder.StartsWith("language\\"))
+				{
+					continue;
+				}
+		%>
+		<folder><%=folder%></folder><%
+			}
+		%>		
+	</files>
+	<languages folder="site">
+		<language tag="en-GB">language/en-GB.<%=componentName%>.ini
+		</language>
+		<language tag="vi-VN">language/vi-VN.<%=componentName%>.ini
+		</language>		
+	</languages>	
+	<administration>
+		<menu img="class:component"><%=componentName%></menu>
+		<submenu>
+			<!--
+				Note that all & must be escaped to &amp; for the file to be valid
+				XML and be parsed by the installer
+				Example bellow:
+				
+				<menu link="option=com_weblinks" view="links" img="class:weblinks"
+					alt="Weblinks/Links">com_weblinks_links</menu>
+				<menu link="option=com_categories&amp;extension=com_weblinks"
+					view="categories" img="class:weblinks-cat" alt="Weblinks/Categories">com_weblinks_categories</menu>				
+				<menu link="option=<%=ComponentName%>s&amp;view=clients" view="clients"
+					img="class:banners-clients" alt="Banners/Clients">com_banners_clients</menu>					
+			-->
+			<%
+			foreach(string strNomal in ListViews)
+			{
+				string str = UpperFirstChar(strNomal);
+			%><menu link="option=<%=componentName%>&amp;view=<%=str%>" view="<%=str%>" img="class:component" alt="<%=str%>"><%=str%></menu>
+			<%}
+			if(HaveTableContaiCategoryColumn())
+			{
+			%>
+			<menu link="option=com_categories&amp;extension=<%=componentName%>" view="Category" img="class:category" alt="Category">Category</menu>
+			<%}%>
+		</submenu>		
+		<files folder="admin"><%
+			foreach(string file in adminFiles)
+			{
+				if(IsExcludeFolder(file))
+				{
+					continue;
+				}			
+		%>
+			<filename><%=file%></filename><%		
+			}
+		%>	
+		<%
+			foreach(string folder in AdminFolderSubDirs)
+			{
+				if(folder.StartsWith("language\\"))
+				{
+					continue;
+				}
+		%>
+			<folder><%=folder%></folder><%
+			}
+		%>
+		</files>
+		<languages folder="admin">
+			<language tag="en-GB">language/en-GB.<%=componentName%>.ini
+			</language>
+			<language tag="vi-VN">language/vi-VN.<%=componentName%>.ini
+			</language>
+			<language tag="en-GB">language/en-GB.<%=componentName%>.sys.ini
+			</language>
+			<language tag="vi-VN">language/vi-VN.<%=componentName%>.sys.ini
+			</language>			
+		</languages>	
+	</administration>
+</extension><%
+	}
+//**************************************** End of get content of xml component file ****************************
+%>
+##|BODY_END

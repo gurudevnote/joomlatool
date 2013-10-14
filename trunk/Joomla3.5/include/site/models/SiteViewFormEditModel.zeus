@@ -1,0 +1,164 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE SiteViewFormEditModel
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateSiteViewFormEditModel(string path, string view)
+	{
+		ITable table = GetTableFromView(view);
+		string tableNameMeaning = GetTableNameWithMeaning(table);
+		string tableName = GetTableNameForMultipleLanguage(table);
+		tableName = tableName.ToUpper();
+		string editView = GetEditView(view);
+		editView = editView.ToLower();
+		bool haveCategory = false;
+		if(IsContainColumn(table,"catid"))
+		{
+			haveCategory = true;
+		}
+		
+		bool haveAttribute = false;
+		
+		if(IsContainColumn(table,"attribs"))
+		{
+			haveAttribute = true;
+		}
+		
+		//disable category
+		//haveCategory  = false;
+		
+		IList<IColumn> list = GetListColumnOrder(table);
+		
+		output.clear();
+%><?php
+/**
+ * @package		Joomla.Site
+ * @subpackage	com_content
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+// No direct access
+defined('_JEXEC') or die;
+
+// Base this model on the backend version.
+require_once JPATH_ADMINISTRATOR.'/components/<%=ComponentName%>/models/<%=view%>.php';
+
+/**
+ * 
+ *
+ * @package		Joomla.Site
+ * @subpackage	<%=ComponentName%>
+ * @since 1.5
+ */
+class <%=ComponentClassName%>ModelForm<%=view%> extends <%=ComponentClassName%>Model<%=view%>
+{
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @since	1.6
+	 */
+	protected function populateState()
+	{
+		$app = JFactory::getApplication();
+
+		// Load state from the request.
+		$pk = JRequest::getInt('a_id');
+		$this->setState('<%=editView%>.id', $pk);
+
+		<%if(haveCategory){
+		%>$this->setState('<%=editView%>.catid', JRequest::getInt('catid'));<%
+		}%>
+
+		$return = JRequest::getVar('return', null, 'default', 'base64');
+		$this->setState('return_page', base64_decode($return));
+
+		// Load the parameters.
+		$params	= $app->getParams();
+		$this->setState('params', $params);
+
+		$this->setState('layout', JRequest::getCmd('layout'));
+	}
+
+	/**
+	 * Method to get article data.
+	 *
+	 * @param	integer	The id of the article.
+	 *
+	 * @return	mixed	Content item data object on success, false on failure.
+	 */
+	public function getItem($itemId = null)
+	{
+		// Initialise variables.
+		$itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('<%=editView%>.id');
+
+		// Get a row instance.
+		$table = $this->getTable();
+
+		// Attempt to load the row.
+		$return = $table->load($itemId);
+
+		// Check for a table object error.
+		if ($return === false && $table->getError()) {
+			$this->setError($table->getError());
+			return false;
+		}
+
+		$properties = $table->getProperties(1);
+		$value = JArrayHelper::toObject($properties, 'JObject');
+		
+		// Compute selected asset permissions.
+		$user	= JFactory::getUser();
+		$userId	= $user->get('id');
+		$asset	= '<%=ComponentName%>.<%=editView%>.'.$value->id;
+
+		<%if(haveAttribute){
+		%>// Convert attrib field to Registry.
+		$value->params = new JRegistry;
+		$value->params->loadString($value->attribs);
+		
+		// Check general edit permission first.
+		if ($user->authorise('core.edit', $asset)) {
+			$value->params->set('access-edit', true);
+		}
+		// Now check if edit.own is available.
+		elseif (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
+			// Check for a valid user and that they are the owner.
+			if ($userId == $value->created_by) {
+				$value->params->set('access-edit', true);
+			}
+		}<%
+		}%>
+		
+		return $value;
+	}
+
+	/**
+	 * Get the return URL.
+	 *
+	 * @return	string	The return URL.
+	 * @since	1.6
+	 */
+	public function getReturnPage()
+	{
+		return base64_encode($this->getState('return_page'));
+	}
+}
+<%
+		output.save(path, "o");
+		output.clear();		
+	}
+%>
+##|BODY_END

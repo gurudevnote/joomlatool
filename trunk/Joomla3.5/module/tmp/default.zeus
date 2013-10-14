@@ -1,0 +1,43 @@
+﻿##|TYPE Function
+##|UNIQUEID ac0272ab-d94f-4f7b-b47b-ad543e3e3017
+##|TITLE Joomla Module default template
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+public void CreateModuleDefaultTemplate(string path)
+{
+	output.clear();
+%><?php
+/**
+ * @package		Joomla.Site
+ * @subpackage	mod_banners
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+// no direct access
+defined('_JEXEC') or die;
+$document = &JFactory::getDocument();
+$document->addScript( JURI::root().'media/fancyBox/lib/jquery.mousewheel-3.0.6.pack.js' );
+$document->addScript( JURI::root().'media/lofslidernews/js/jquery.easing.js' );
+$document->addScript( JURI::root().'media/lofslidernews/js/script.js' );
+$document->addStyleSheet( JURI::root().'media/lofslidernews/css/layout.css', "text/css", "screen");
+$document->addStyleSheet( JURI::root().'media/lofslidernews/css/style4.css', "text/css", "screen");
+$document->addScript( JURI::root().'media/lofslidernews/js/script.js' );
+?>
+Default template
+<%
+	output.save(path, "o");
+	output.clear();	
+}
+%>
+##|BODY_END

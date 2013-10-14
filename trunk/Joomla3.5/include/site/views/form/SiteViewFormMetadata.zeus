@@ -1,0 +1,44 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE SiteViewFormMetaData
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateSiteViewFormMetaData(string path, string view)
+	{
+		ITable table = GetTableFromView(view);
+		string tableNameMeaning = GetTableNameWithMeaning(table);
+		string tableName = GetTableNameForMultipleLanguage(table);
+		tableName = tableName.ToUpper();
+		string editView = GetEditView(view);
+		editView = editView.ToLower();
+		bool haveCategory = false;
+		if(IsContainColumn(table,"catid"))
+		{
+			haveCategory = true;
+		}
+		
+		//disable category
+		haveCategory  = false;
+		output.clear();
+%><?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<view title="Create new <%=view%>">
+		<message><![CDATA[Create new <%=view%>"]]></message>
+	</view>
+</metadata>
+<%
+		output.save(path, "o");
+		output.clear();		
+	}
+%>
+##|BODY_END

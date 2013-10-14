@@ -1,0 +1,69 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE EnglishResourceFile
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateEnglishResourceFile(string filePath)
+	{
+		output.clear();
+		string componentNameUpper = ComponentName.ToUpper();
+%><%=componentNameUpper%>_FIELDSET_PUBLISHING="Publishing Options"
+<%=componentNameUpper%>_CONFIGURATION="<%=UpperFirstChar(ComponentNameNoPrefix)%> Manager Options"
+<%=componentNameUpper%>_NO_ITEM_SELECTED="No items selected"
+<%=componentNameUpper%>_PAGEBREAK_DOC_TITLE="Page Break"
+<%=componentNameUpper%>_WARNING_PROVIDE_VALID_TITLE="Please provide a valid, non-blank title."
+<%=componentNameUpper%>_WARNING_PROVIDE_VALID_NAME="Please provide a valid, non-blank name."
+<%=componentNameUpper%>_WARNING_PROVIDE_VALID_ALIAS="Please provide a valid, non-blank alias."
+<%=componentNameUpper%>_SLIDER_EDITOR_CONFIG="Other Options"
+<%=componentNameUpper%>_N_ITEMS_ARCHIVED="%s items archived."
+<%=componentNameUpper%>_N_ITEMS_ARCHIVED_1="%s items archived."
+<%=componentNameUpper%>_N_ITEMS_CHECKED_IN_0="No item successfully checked in"
+<%=componentNameUpper%>_N_ITEMS_CHECKED_IN_1="%d item successfully checked in"
+<%=componentNameUpper%>_N_ITEMS_CHECKED_IN_MORE="%d items successfully checked in"
+<%=componentNameUpper%>_N_ITEMS_DELETED="%s items deleted."
+<%=componentNameUpper%>_N_ITEMS_DELETED_1="%s items deleted."
+<%=componentNameUpper%>_N_ITEMS_PUBLISHED="%s items published."
+<%=componentNameUpper%>_N_ITEMS_PUBLISHED_1="%s items published."
+<%=componentNameUpper%>_N_ITEMS_TRASHED="%s items trashed."
+<%=componentNameUpper%>_N_ITEMS_TRASHED_1="%s items trashed."
+<%=componentNameUpper%>_N_ITEMS_UNPUBLISHED="%s items unpublished."
+<%=componentNameUpper%>_N_ITEMS_UNPUBLISHED_1="%s items unpublished."
+<%				
+		foreach(ITable table in SelectedObjectTables)
+		{
+			string tableNameMeaning = GetTableNameWithMeaning(table);
+			string tableName = GetTableNameForMultipleLanguage(table);
+			string tableNameUpperFirstCharInWord = UpperFirstCharInWord(tableName);
+%><%=componentNameUpper%>_EDIT_<%=tableName.ToUpper()%>=Edit <%=tableNameMeaning%>
+<%=componentNameUpper%>_NEW_<%=tableName.ToUpper()%>=New <%=tableNameMeaning%>
+<%=componentNameUpper%>_VIEW_<%=tableName.ToUpper()%>=View <%=tableNameMeaning%>
+<%=componentNameUpper%>_MANAGER_<%=tableName.ToUpper()%>=Manager <%=tableNameMeaning%>
+<%=componentNameUpper%>_<%=tableName.ToUpper()%>_TITLE=<%=tableNameUpperFirstCharInWord%> Manager: <%=tableNameUpperFirstCharInWord%>
+<%=componentNameUpper%>_<%=tableName.ToUpper()%>_ATTRIBS_FIELDSET_LABEL= <%=tableNameUpperFirstCharInWord%> Options
+<%=componentNameUpper%>_<%=tableName.ToUpper()%>_FIELDSET_RULES=<%=tableNameUpperFirstCharInWord%> Permission
+<%
+		}
+		foreach(string view in EditViews)
+		{%>
+COM_<%=ComponentName.ToUpper()%>_FIELD_SELECT_<%=view.ToUpper()%>_LABEL= select <%=view.ToLower()%>
+COM_<%=ComponentName.ToUpper()%>_FIELD_SELECT_<%=view.ToUpper()%>_DESC= select a <%=view.ToLower()%>
+COM_<%=ComponentName.ToUpper()%>_SELECT_AN_<%=view.ToUpper()%> = select an <%=view.ToLower()%>
+COM_<%=ComponentName.ToUpper()%>_CHANGE_<%=view.ToUpper()%> = Select or Change <%=view.ToLower()%>
+COM_<%=ComponentName.ToUpper()%>_CHANGE_<%=view.ToUpper()%>_BUTTON = Select / Change
+<%
+		}		
+		output.save(filePath, "o");
+		output.clear();	
+	}
+%>
+##|BODY_END

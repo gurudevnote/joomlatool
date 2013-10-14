@@ -1,0 +1,450 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE SiteForm
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateSiteForm(string path, string model)
+	{
+		ITable table = GetTableFromView(model);
+		string tableNameForMultipleLang = GetTableNameForMultipleLanguage(table);
+		tableNameForMultipleLang = tableNameForMultipleLang.ToUpper();
+		output.clear();
+%><?xml version="1.0" encoding="utf-8"?>
+	<!--
+		$Id: <%=model%>.xml huuhuy $
+	-->
+<form>
+	<fieldset>
+<%
+		foreach(IColumn col in table.Columns)
+		{
+			string classValue = "inputbox";
+			string defaultPro = string.Empty;
+			string fieldName = col.Name.ToLower();
+			if(col.IsAutoKey)
+			{
+				classValue = "readonly";
+				defaultPro = "default=\"0\"";
+			}			
+			int columnLength = GetColumnDataLengh(col);
+			if(columnLength > 45)
+			{
+				columnLength = 45;
+			}
+			//sepecify column type
+			
+			if(fieldName.Equals("state"))
+			{
+%>		
+		<field name="state" type="list" label="JSTATUS"
+			description="JFIELD_PUBLISHED_DESC" class="inputbox"
+			filter="intval" size="1" default="1"
+		>
+			<option value="1">
+				JPUBLISHED</option>
+			<option value="0">
+				JUNPUBLISHED</option>
+			<option value="2">
+				JARCHIVED</option>
+			<option value="-2">
+				JTRASHED</option>
+		</field>
+<%
+
+			}
+			else if(fieldName.Equals("metakey") || fieldName.Equals("metadesc") || fieldName.Equals("metadata"))
+			{
+%>		<field name="<%=fieldName%>" type="textarea"
+			label="<%=fieldName%>" description="<%=fieldName%>"
+			class="inputbox" rows="3" cols="30" />
+<%
+			}
+			else if(fieldName.Equals("access"))
+			{
+%>		<field name="<%=fieldName%>" type="accesslevel" label="<%=fieldName%>"
+			description="<%=fieldName%>" class="inputbox" size="1" />
+<%
+			}
+			else if(fieldName.Equals("language"))
+			{
+%>		<field name="<%=fieldName%>" type="contentlanguage" label="JFIELD_<%=fieldName%>_LABEL"
+			description="COM_<%=ComponentNameNoPrefix.ToUpper()%>_FIELD_LANGUAGE_DESC" class="inputbox"
+		>
+			<option value="*">JALL</option>
+		</field>
+<%
+			}
+			else if(fieldName.Equals("created_by")||fieldName.Equals("modified_by")||fieldName.Equals("created_user_id")||fieldName.Equals("modified_user_id")||fieldName.Equals("checked_out")||fieldName.Equals("checked_user_id"))
+			{
+%>		<field name="<%=fieldName%>" type="user"
+			label="<%=fieldName%>" description="<%=fieldName%>"
+			class="inputbox" size="20" />
+<%
+			}
+			else if(fieldName.Equals("catid"))
+			{
+%>		<field name="catid" type="category" extension="<%=ComponentName%>"
+			label="JCATEGORY" description="JFIELD_CATEGORY_DESC"
+			class="inputbox" />
+<%			
+			}
+			else if(fieldName.Equals("params"))
+			{
+				continue;
+			}
+			else if(fieldName.Equals("attribs"))
+			{
+				continue;
+			}
+			else if(fieldName.Equals("asset_id"))
+			{
+%>
+		<field name="asset_id" type="hidden" filter="unset" />
+<%
+			}
+			else if(fieldName.Equals("rules"))
+			{
+				continue;
+			}
+			else if(ColumnDataTypeIsText(col)||ColumnDataTypeIsMediumText(col))//editor
+			{
+%>		<field name="<%=fieldName%>" type="editor" class="inputbox"
+			label="<%=fieldName%>" description="<%=fieldName%>"
+			filter="<%=ComponentClassName%>Helper::filterText" buttons="true" />
+<%
+			}
+			else if(ColumnDataTypeIsDateTime(col))//Date time
+			{
+%>		<field name="<%=fieldName%>" type="calendar" label="<%=fieldName%>"
+			description="<%=fieldName%>" class="inputbox" size="22"
+			format="%Y-%m-%d %H:%M:%S" filter="user_utc" />
+<%
+			}
+			else if(fieldName.Contains("image") || fieldName.Contains("file") || fieldName.Contains("path"))
+			{
+%>		<field name="<%=fieldName%>" type="media" label="<%=fieldName%>"
+			description="<%=fieldName%>" />
+<%			
+			}
+			else
+			{			
+%>		<field name="<%=fieldName%>" type="text" label="<%=fieldName%>"
+			description="<%=fieldName%>" class="<%=classValue%>" size="<%=columnLength.ToString()%>"  <%=defaultPro%>/>
+<%				
+			}			
+		}
+		%>
+		<field
+			name="buttonspacer"
+			description="JGLOBAL_ACTION_PERMISSIONS_DESCRIPTION"
+			type="spacer" />
+<%if(IsContainColumn(table,"asset_id"))
+{
+%>			
+		<field name="rules" type="rules" label="JFIELD_RULES_LABEL"
+			translate_label="false" class="inputbox" filter="rules"
+			component="<%=ComponentName%>" section="<%=model.ToLower()%>" validate="rules"
+		/>
+<%
+}
+%>		
+	</fieldset>
+<%if(IsContainColumn(table,"params"))
+{
+%>
+	<fields name="params">
+		<fieldset name="image">
+			<field name="imageurl" type="media" directory="banners"
+				hide_none="1" label="COM_BANNERS_FIELD_IMAGE_LABEL"
+				size="40"
+				description="COM_BANNERS_FIELD_IMAGE_DESC" />
+			<field name="width" type="text"
+				class="inputbox validate-numeric" label="COM_BANNERS_FIELD_WIDTH_LABEL"
+				description="COM_BANNERS_FIELD_WIDTH_DESC" />
+
+			<field name="height" type="text"
+				class="inputbox validate-numeric" label="COM_BANNERS_FIELD_HEIGHT_LABEL"
+				description="COM_BANNERS_FIELD_HEIGHT_DESC" />
+			<field name="alt" type="text" class="inputbox"
+				label="COM_BANNERS_FIELD_ALT_LABEL" description="COM_BANNERS_FIELD_ALT_DESC" />
+		</fieldset>
+	</fields>
+<%
+}%>		
+	<fields name="attribs">
+		<fieldset name="basic" label="<%=ComponentName.ToUpper()%>_<%=tableNameForMultipleLang%>_ATTRIBS_FIELDSET_LABEL">
+<%if(IsContainColumn(table,"title"))
+{
+%>			<field
+				name="show_title"
+				type="list"
+				label="JGLOBAL_SHOW_TITLE_LABEL"
+				description="JGLOBAL_SHOW_TITLE_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="link_titles"
+				type="list"
+				label="JGLOBAL_LINKED_TITLES_LABEL"
+				description="JGLOBAL_LINKED_TITLES_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field><%
+}
+if(IsContainColumn(table,"catid")||IsContainColumn(table,"categoryid"))
+{
+%>
+			<field
+				name="show_category"
+				type="list"
+				label="JGLOBAL_SHOW_CATEGORY_LABEL"
+				description="JGLOBAL_SHOW_CATEGORY_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="link_category"
+				type="list"
+				label="JGLOBAL_LINK_CATEGORY_LABEL"
+				description="JGLOBAL_LINK_CATEGORY_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JNO</option>
+				<option	value="1">JYES</option>
+			</field>
+
+			<field
+				name="show_parent_category"
+				type="list"
+				label="JGLOBAL_SHOW_PARENT_CATEGORY_LABEL"
+				description="JGLOBAL_SHOW_PARENT_CATEGORY_DESC">
+				<option	value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="link_parent_category"
+				type="list"
+				label="JGLOBAL_LINK_PARENT_CATEGORY_LABEL"
+				description="JGLOBAL_LINK_PARENT_CATEGORY_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JNO</option>
+				<option	value="1">JYES</option>
+			</field>
+<%
+}
+if(IsContainColumn(table,"created_by"))
+{
+%>			<field
+				name="show_author"
+				type="list"
+				label="JGLOBAL_SHOW_AUTHOR_LABEL"
+				description="JGLOBAL_SHOW_AUTHOR_DESC">
+				<option	value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="link_author"
+				type="list"
+				label="JGLOBAL_LINK_AUTHOR_LABEL"
+				description="JGLOBAL_LINK_AUTHOR_DESC">
+				<option	value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JNO</option>
+				<option	value="1">JYES</option>
+			</field>
+<%
+}
+if(IsContainColumn(table,"created"))
+{
+%>
+			<field
+				name="show_create_date"
+				type="list"
+				label="JGLOBAL_SHOW_CREATE_DATE_LABEL"
+				description="JGLOBAL_SHOW_CREATE_DATE_DESC">
+				<option	value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+<%}
+if(IsContainColumn(table,"modified"))
+{
+%>
+			<field
+				name="show_modify_date"
+				type="list"
+				label="JGLOBAL_SHOW_MODIFY_DATE_LABEL"
+				description="JGLOBAL_SHOW_MODIFY_DATE_DESC">
+				<option	value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+<%}
+if(IsContainColumn(table,"publish_up"))
+{
+%>
+			<field
+				name="show_publish_date"
+				type="list"
+				label="JGLOBAL_SHOW_PUBLISH_DATE_LABEL"
+				description="JGLOBAL_SHOW_PUBLISH_DATE_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+<%}
+%>
+			<field
+				name="show_item_navigation"
+				type="list"
+				label="JGLOBAL_SHOW_NAVIGATION_LABEL"
+				description="JGLOBAL_SHOW_NAVIGATION_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="show_icons"
+				type="list"
+				label="JGLOBAL_SHOW_ICONS_LABEL"
+				description="JGLOBAL_SHOW_ICONS_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="show_print_icon"
+				type="list"
+				label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
+				description="JGLOBAL_SHOW_PRINT_ICON_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="show_email_icon"
+				type="list"
+				label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
+				description="JGLOBAL_SHOW_EMAIL_ICON_DESC">
+				<option	value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+			<field
+				name="show_vote"
+				type="list"
+				label="JGLOBAL_SHOW_VOTE_LABEL"
+				description="JGLOBAL_SHOW_VOTE_DESC"
+			>
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+			<field
+				name="show_hits"
+				type="list"
+				label="JGLOBAL_SHOW_HITS_LABEL"
+				description="JGLOBAL_SHOW_HITS_DESC">
+				<option	value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="show_noauth"
+				type="list"
+				label="JGLOBAL_SHOW_UNAUTH_LINKS_LABEL"
+				description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option value="0">JNO</option>
+						<option value="1">JYES</option>
+			</field>
+
+			<field
+				name="spacer2"
+				type="spacer"
+				hr="true"
+			/>
+
+
+
+			<field name="alternative_readmore" type="inputbox"
+				label="JFIELD_READMORE_LABEL"
+				description="JFIELD_READMORE_DESC"
+				class="inputbox" size="25" />
+
+			<field name="article_layout" type="componentlayout"
+				label="JFIELD_ALT_LAYOUT_LABEL"
+				description="JFIELD_ALT_COMPONENT_LAYOUT_DESC"
+				useglobal="true"
+				extension="com_content" view="article" />
+
+
+		</fieldset>
+	</fields>
+	<fields name="metadata">
+		<field name="robots"
+			type="list"
+			label="JFIELD_METADATA_ROBOTS_LABEL"
+			description="JFIELD_METADATA_ROBOTS_DESC"
+		>
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="index, follow">JGLOBAL_INDEX_FOLLOW</option>
+			<option value="noindex, follow">JGLOBAL_NOINDEX_FOLLOW</option>
+			<option value="index, nofollow">JGLOBAL_INDEX_NOFOLLOW</option>
+			<option value="noindex, nofollow">JGLOBAL_NOINDEX_NOFOLLOW</option>
+		</field>
+
+		<field name="author" type="text"
+			label="JAUTHOR" description="JFIELD_METADATA_AUTHOR_DESC"
+			size="20" />
+
+		<field name="rights" type="textarea" label="JFIELD_META_RIGHTS_LABEL"
+			description="JFIELD_META_RIGHTS_DESC" required="false" filter="string"
+			cols="30" rows="2" />
+<%if(IsContainColumn(table,"xreference"))
+{%>			
+		<field name="xreference" type="text"
+			label="JFIELD_KEY_REFERENCE_LABEL"
+			description="JFIELD_KEY_REFERENCE_DESC" 
+			class="inputbox" size="20" />
+
+<%}%>
+<%foreach(string field in MetadataOptionFields){
+	if(IsContainColumn(table,field))
+	{
+%>		<field name="<%=field.ToLower()%>" type="textarea" label="<%=field.ToLower()%>"
+			description="<%=field.ToLower()%>" required="false" filter="string"
+			cols="30" rows="2" /><%
+	}
+}%>
+	</fields>
+</form>
+<%
+
+		output.save(path, "o");
+		output.clear();
+	}
+%>
+##|BODY_END

@@ -1,0 +1,161 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE AdminViewList
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateAdminViewList(string path, string view)
+	{
+		ITable table = GetTableFromView(view);
+		string tableNameMeaning = GetTableNameWithMeaning(table);
+		string tableName = GetTableNameForMultipleLanguage(table);
+		tableName = tableName.ToUpper();
+		output.clear();
+%><?php
+/**
+ * @version		$Id: view.html.php 22355 2011-11-07 05:11:58Z github_bot $
+ * @package		Joomla.Administrator
+ * @subpackage	<%=ComponentName%>
+ * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+// No direct access
+defined('_JEXEC') or die;
+
+jimport('joomla.application.component.view');
+
+/**
+ * View class for a list of articles.
+ *
+ * @package		Joomla.Administrator
+ * @subpackage	<%=ComponentName%>
+ * @since		1.6
+ */
+class <%=ComponentClassName%>View<%=view%> extends JView
+{
+	protected $items;
+	protected $pagination;
+	protected $state;
+
+	/**
+	 * Display the view
+	 *
+	 * @return	void
+	 */
+	public function display($tpl = null)
+	{		
+		// Access check.
+		if (!JFactory::getUser()->authorise('core.manage', '<%=ComponentName%>.assetview.<%=view.ToLower()%>')) {
+			return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+		}
+		
+		$this->items		= $this->get('Items');
+		$this->pagination	= $this->get('Pagination');
+		$this->state		= $this->get('State');
+		$this->authors		= $this->get('Authors');
+
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			JError::raiseError(500, implode("\n", $errors));
+			return false;
+		}
+
+		// We don't need toolbar in the modal window.
+		if ($this->getLayout() !== 'modal') {
+			$this->addToolbar();
+		}
+
+		parent::display($tpl);
+	}
+
+	/**
+	 * Add the page title and toolbar.
+	 *
+	 * @since	1.6
+	 */
+	protected function addToolbar()
+	{
+<%
+if(IsContainColumn(table,"catid"))
+{
+%>	
+		$canDo	= <%=ComponentClassName%>Helper::getActions($this->state->get('filter.category_id'));
+<%
+}else
+{
+%>
+		$canDo	= <%=ComponentClassName%>Helper::getActionsBySection("<%=view.ToLower()%>");
+<%
+}
+%>		
+		$user	= JFactory::getUser();
+		JToolBarHelper::title(JText::_('<%=ComponentName.ToUpper()%>_<%=tableName%>_TITLE'), 'article.png');
+
+		if ($canDo->get('core.create') || (count($user->getAuthorisedCategories('<%=ComponentName%>', 'core.create'))) > 0 ) {
+			JToolBarHelper::addNew('<%=GetEditView(view).ToLower()%>.add');
+		}
+
+		if (($canDo->get('core.edit')) || ($canDo->get('core.edit.own'))) {
+			JToolBarHelper::editList('<%=GetEditView(view).ToLower()%>.edit');
+		}
+
+		if ($canDo->get('core.edit.state')) {
+			<%
+			if(IsContainColumn(table,"state"))
+			{
+			%>		
+			JToolBarHelper::divider();
+			JToolBarHelper::publish('<%=view.ToLower()%>.publish', 'JTOOLBAR_PUBLISH', true);
+			JToolBarHelper::unpublish('<%=view.ToLower()%>.unpublish', 'JTOOLBAR_UNPUBLISH', true);
+			<%
+			}
+			
+			if(IsContainColumn(table,"featured"))
+			{
+			%>
+			JToolBarHelper::custom('<%=view.ToLower()%>.featured', 'featured.png', 'featured_f2.png', 'JFEATURED', true);
+			<%
+			}
+			if(IsContainColumn(table,"state"))
+			{
+			%>
+			JToolBarHelper::divider();
+			JToolBarHelper::archiveList('<%=view.ToLower()%>.archive');
+			<%
+			}
+			%>
+			JToolBarHelper::checkin('<%=view.ToLower()%>.checkin');
+		}
+
+		if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete')) {
+			JToolBarHelper::deleteList('', '<%=view.ToLower()%>.delete','JTOOLBAR_EMPTY_TRASH');
+			JToolBarHelper::divider();
+		}
+		elseif ($canDo->get('core.edit.state')) {
+			JToolBarHelper::trash('<%=view.ToLower()%>.trash');
+			JToolBarHelper::divider();
+		}
+
+		if ($canDo->get('core.admin')) {
+			JToolBarHelper::preferences('<%=ComponentName%>');
+			JToolBarHelper::divider();
+		}
+
+		JToolBarHelper::help('JHELP_CONTENT_ARTICLE_MANAGER');
+	}	
+}<%
+		output.save(path, "o");
+		output.clear();		
+	}
+%>
+##|BODY_END

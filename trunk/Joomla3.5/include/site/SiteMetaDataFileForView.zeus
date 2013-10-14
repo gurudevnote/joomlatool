@@ -1,0 +1,31 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE SiteMetaDataFile
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateSiteMetaDataFileForView(string path,string view)
+	{
+		output.clear();
+%><?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<view
+		title="<%=view%>">
+		<message><![CDATA[TYPEARTICLAYDESC]]></message>
+	</view>
+</metadata>
+<%		
+		output.save(path, "o");
+		output.clear();
+	}
+%>
+##|BODY_END
