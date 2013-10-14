@@ -1,0 +1,155 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE AdminModelFieldsEdit
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateAdminModelFieldsEdit(string path, string model)
+	{
+		ITable table = GetTableFromView(model);
+		string listView = GetListView(model);
+		string editView = GetEditView(model);
+		editView = editView.ToUpper();
+		listView = listView.ToLower();
+		IColumn firstColumn = GetFirstColumn(table);
+		string firstColumnName = firstColumn.Name;
+		output.clear();
+%><?php
+/**
+ * @version		$Id$
+ * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+defined('JPATH_BASE') or die;
+
+JFormHelper::loadFieldClass('list');
+
+/**
+ * Form Field class for the Joomla Framework.
+ *
+ * @package		Joomla.Administrator
+ * @subpackage	com_categories
+ * @since		1.6
+ */
+class JFormField<%=model%>Edit extends JFormFieldList
+{
+	/**
+	 * A flexible category list that respects access controls
+	 *
+	 * @var		string
+	 * @since	1.6
+	 */
+	public $type = '<%=model%>Edit';
+
+	/**
+	 * Method to get a list of categories that respects access controls and can be used for
+	 * either category assignment or parent category assignment in edit screens.
+	 * Use the parent element to indicate that the field will be used for assigning parent categories.
+	 *
+	 * @return	array	The field option objects.
+	 * @since	1.6
+	 */
+	protected function getOptions()
+	{	
+		// Initialise variables.
+		$options = array();
+		$published = $this->element['published']? $this->element['published'] : array(0,1);
+		$name = (string) $this->element['name'];
+
+		// Let's get the id for the current item, either category or content item.
+		$jinput = JFactory::getApplication()->input;
+		// Load the category options for a given extension.
+
+		$db		= JFactory::getDbo();
+		$query	= $db->getQuery(true);
+		<%
+		string selectfield = "";
+		if(IsContainColumn(table,"id"))
+		{
+			selectfield += " a.id AS value,";
+		}
+		else
+		{
+			selectfield += " a." + firstColumnName + " AS value,";
+		}
+		
+		
+		if(IsContainColumn(table,"title"))
+		{
+			selectfield += " a.title AS text,";
+		}
+		else
+		{
+			selectfield += " a." + firstColumnName + " AS text,";
+		}
+		
+		if(IsContainColumn(table,"published"))
+		{
+			selectfield += " published,";
+		}
+		
+		if(selectfield.EndsWith(","))
+		{
+			selectfield = selectfield.Substring(0,selectfield.Length-1);
+		}
+		
+		%>
+
+		$query->select('<%=selectfield%>');
+		$query->from('#__<%=GetTableName(table).ToLower()%> AS a');
+
+		// Filter on the published state
+		<%if(IsContainColumn(table,"published"))
+		{%>
+
+		if (is_numeric($published))
+		{
+			$query->where('a.published = ' . (int) $published);
+		}
+		elseif (is_array($published))
+		{
+			JArrayHelper::toInteger($published);
+			$query->where('a.published IN (' . implode(',', $published) . ')');
+		}
+		<%}%>
+
+		<%if(IsContainColumn(table,"lft"))
+		{%>
+		$query->order('a.lft ASC');
+		<%}%>
+
+		// Get the options.
+		$db->setQuery($query);
+
+		$options = $db->loadObjectList();
+		
+		$item->value = "";
+		$item->text = "--- Select an item ---";
+		$list = array();
+		$list[] = $item;
+		$options = array_merge($list, $options);		
+
+		// Check for a database error.
+		if ($db->getErrorNum()) {
+			JError::raiseWarning(500, $db->getErrorMsg());
+		}
+
+		return $options;
+	}
+}
+<%
+		output.save(path, "o");
+		output.clear();		
+	}
+%>
+##|BODY_END

@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{FFD624E9-6B1A-455B-B5F4-F74DF4C33A30}"
+	ProjectSection(SolutionItems) = preProject
+		JoomlaGUITemplate\lib\Dnp.Utils.dll = JoomlaGUITemplate\lib\Dnp.Utils.dll
+		JoomlaGUITemplate\lib\MyMeta.dll = JoomlaGUITemplate\lib\MyMeta.dll
+		JoomlaGUITemplate\lib\Zeus.dll = JoomlaGUITemplate\lib\Zeus.dll
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoomlaGUITemplateVS-2010", "JoomlaGUITemplate\JoomlaGUITemplateVS-2010.csproj", "{96B64713-B2B8-45BC-A9C7-888F7BA855A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Template", "Template", "{8CA35E10-0C84-4EF6-BD9E-F01A5A6DB322}"
+	ProjectSection(SolutionItems) = preProject
+		..\CommonField.xls = ..\CommonField.xls
+		..\component.zeus = ..\component.zeus
+		..\RegisterMyMeta.txt = ..\RegisterMyMeta.txt
+		..\template.zeus = ..\template.zeus
+		..\TemplateFunction.xls = ..\TemplateFunction.xls
+		..\test.zeus = ..\test.zeus
+		..\unregister.bat = ..\unregister.bat
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96B64713-B2B8-45BC-A9C7-888F7BA855A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96B64713-B2B8-45BC-A9C7-888F7BA855A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96B64713-B2B8-45BC-A9C7-888F7BA855A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96B64713-B2B8-45BC-A9C7-888F7BA855A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

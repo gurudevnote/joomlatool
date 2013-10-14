@@ -1,0 +1,43 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE SiteComponentFile
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateSiteComponentFile(string path)
+	{
+		output.clear();
+%><?php
+/**
+ * @package		Joomla.Site
+ * @subpackage	<%=ComponentName%>
+ * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+// no direct access
+defined('_JEXEC') or die;
+
+// Include dependancies
+jimport('joomla.application.component.controller');
+require_once JPATH_COMPONENT.'/helpers/route.php';
+require_once JPATH_COMPONENT.'/helpers/query.php';
+
+$controller = JController::getInstance('<%=ComponentClassName%>');
+$controller->execute(JRequest::getCmd('task'));
+$controller->redirect();
+<%		
+		output.save(path, "o");
+		output.clear();
+	}
+%>
+##|BODY_END

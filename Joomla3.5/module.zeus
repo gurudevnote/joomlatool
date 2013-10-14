@@ -1,0 +1,136 @@
+﻿##|TYPE Template
+##|UNIQUEID dffaf017-74ec-431c-8799-5380acc94959
+##|TITLE Module
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|COMMENTS_BEGIN
+tạo module cho joomla
+##|COMMENTS_END
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|GUI_BEGIN
+<%#DEBUG%><%#REFERENCE System.dll,System.Core.dll,System.Data.dll,System.Data.DataSetExtensions.dll,System.Deployment.dll,System.Windows.Forms.dll, System.Drawing.dll,System.Xml.dll, System.Xml.Linq.dll %>
+<%#NAMESPACE System,System.Collections.Generic, System.ComponentModel, System.Data, System.Windows.Forms, System.Drawing, System.Linq, System.Text %>
+public class GeneratedGui : DotNetScriptGui
+{
+	public GeneratedGui(ZeusContext context) : base(context) {}
+
+	//-----------------------------------------
+	// The User Interface Entry Point
+	//-----------------------------------------
+	public override void Setup()
+	{
+		// ** UNCOMMENT CODE BELOW TO SEE UI **
+
+		/*
+		ui.Title = "Template Form Title Here";
+		ui.Width = 600;
+		ui.Height = 700;
+
+		GuiLabel lblError = ui.AddLabel("lblError", "", "");
+		lblError.ForeColor = "Red";
+
+		ui.AddLabel("lblPath", "Select the output path:", "Select the output path in the field below.");
+		ui.AddTextBox("txtPath", "hello", "Select the Output Path.");
+		ui.AddFilePicker("btnPath", "Select Path", "Select the Output Path.", "txtPath", true);
+
+		ui.AddLabel("lblDatabases", "Select a database:", "Select a database in the dropdown below.");		
+		GuiComboBox cmbDatabases = ui.AddComboBox("cmbDatabase", "Select a database.");
+		cmbDatabases.AttachEvent("onchange", "cmbDatabases_onchange");
+
+		ui.AddLabel("lblTables", "Select tables:", "Select tables from the listbox below.");
+		GuiListBox lstTables = ui.AddListBox("lstTables", "Select tables.");
+		lstTables.Height = 80;
+
+		ui.AddLabel("lblViews", "Select view:", "Select views from the listbox below.");
+		GuiListBox lstViews = ui.AddListBox("lstViews", "Select views.");
+		lstViews.Height = 80;
+		ui.ShowGui=true;
+		*/
+		//******************* Config Debug mode ******************
+		//Comment bellow line of code to disable Debug mode
+		//System.Diagnostics.Debugger.Launch();
+		//****************** End Config Debug mode ***************
+	}
+
+}
+##|GUI_END
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%#DEBUG%><%#FILE JoomlaGUITemplate/JoomlaGUITemplate/DirectoryUtils.cs %><%
+public partial class JoomlaModule : DotNetScriptTemplate
+{
+	public string ModuleName {get;set;}
+	
+	public string FullModuleName
+	{
+		get{return "mod_" + ModuleName.ToLower();}
+	}
+	
+	public string Author
+	{
+		get { return "Nguyen Huu Huy"; }
+	}
+	public string AuthorEmail
+	{
+		get { return "huuhuy@gmail.com"; }
+	}
+	
+	public string AuthorWebsite
+	{
+		get { return "http://banktoday.vn"; }
+	}
+	
+	public string ModuleDescription
+	{
+		get { return "Spotlight text module"; }
+	}
+	
+	public string OutputFolder
+	{
+		get {return @"C:\Documents and Settings\Administrator\Desktop\module";}
+	}
+	
+	public string ModuleOutputFolder
+	{
+		get {
+			return OutputFolder + "\\" + FullModuleName;
+		}
+	}
+	
+	protected Zeus.UserInterface.GuiController ui;
+	protected MyMeta.dbRoot MyMeta;
+	protected Dnp.Utils.Utils DnpUtils;
+    public JoomlaModule(IZeusContext context)
+        : base(context)
+	{
+		this.ui = context.Objects["ui"] as Zeus.UserInterface.GuiController;
+        this.MyMeta = context.Objects["MyMeta"] as MyMeta.dbRoot;
+        this.DnpUtils = context.Objects["DnpUtils"] as Dnp.Utils.Utils;
+		ModuleName = "ArticlesMaxHitSpotlighNewest";
+	}
+	
+%><%#FILECOMPILE module/XmlConfig.zeus%><%
+%><%#FILECOMPILE module/controller.zeus%><%
+%><%#FILECOMPILE module/helper.zeus%><%
+%><%#FILECOMPILE module/tmp/default.zeus%><%
+	override public void Render()
+	{
+		DirectoryUtils utils = new DirectoryUtils();
+		DateTime start = DateTime.Now;
+		utils.CreateFolder(ModuleOutputFolder);
+		CreateModuleConfigurationFile(ModuleOutputFolder + "\\" + FullModuleName + ".xml");
+		CreateModuleController(ModuleOutputFolder + "\\" + FullModuleName + ".php");
+		CreateModuleHelper(ModuleOutputFolder + "\\helper.php");
+		CreateModuleDefaultTemplate(ModuleOutputFolder + "\\tmpl\\default.php");
+		output.writeln("Start: " + start.ToString());
+		output.writeln("En   : " + DateTime.Now.ToString());
+	}
+}
+%>
+##|BODY_END

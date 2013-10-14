@@ -1,0 +1,66 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE SiteViewFormEditTemplateXml
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateSiteViewFormEditTemplateXml(string path, string view)
+	{
+		ITable table = GetTableFromView(view);
+		string tableNameMeaning = GetTableNameWithMeaning(table);
+		string tableName = GetTableNameForMultipleLanguage(table);
+		tableName = tableName.ToUpper();
+		string editView = GetEditView(view);
+		editView = editView.ToLower();
+		bool haveCategory = false;
+		if(IsContainColumn(table,"catid"))
+		{
+			haveCategory = true;
+		}
+		
+		//disable category
+		haveCategory  = false;
+		output.clear();
+%><?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_CONTENT_FORM_VIEW_DEFAULT_TITLE" option="COM_CONTENT_FORM_VIEW_DEFAULT_OPTION">
+		<help
+			key = "JHELP_MENUS_MENU_ITEM_ARTICLE_CREATE"
+		/>
+		<message>
+			<![CDATA[COM_CONTENT_FORM_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="enable_category" 
+				type="radio" 
+				default="0" 
+				label="COM_CONTENT_CREATE_ARTICLE_CATEGORY_LABEL" 
+				description="COM_CONTENT_CREATE_ARTICLE_CATEGORY_DESC">
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+			</field>
+			<field name="catid" 
+				type="category" 
+				label="JGLOBAL_CHOOSE_CATEGORY_LABEL" 
+				extension="com_content" 
+				description="JGLOBAL_CHOOSE_CATEGORY_DESC" />
+		</fieldset>
+	</fields>
+</metadata>
+<%
+		output.save(path, "o");
+		output.clear();		
+	}
+%>
+##|BODY_END

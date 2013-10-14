@@ -1,0 +1,85 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE AdminControllerFile
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateAdminControllerFile(string path)
+	{
+		output.clear();
+%><?php
+/**
+ * @version		$Id: controller.php 22338 2011-11-04 17:24:53Z github_bot $
+ * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+// no direct access
+defined('_JEXEC') or die;
+
+jimport('joomla.application.component.controller');
+
+/**
+ * Component Controller
+ *
+ * @package		Joomla.Administrator
+ * @subpackage	<%=ComponentName%>
+ */
+class <%=ComponentControllerClassName%> extends JController
+{
+	/**
+	 * @var		string	The default view.
+	 * @since	1.6
+	 */
+	protected $default_view = '<%=DefaultView.ToLower()%>';
+
+	/**
+	 * Method to display a view.
+	 *
+	 * @param	boolean			If true, the view output will be cached
+	 * @param	array			An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+	 *
+	 * @return	JController		This object to support chaining.
+	 * @since	1.5
+	 */
+	public function display($cachable = false, $urlparams = false)
+	{
+		require_once JPATH_COMPONENT.'/helpers/<%=ComponentNameNoPrefix%>.php';
+
+		// Load the submenu.
+		<%=ComponentClassName%>Helper::addSubmenu(JRequest::getCmd('view', '<%=DefaultView.ToLower()%>'));
+
+		$view	= JRequest::getCmd('view', '<%=DefaultView.ToLower()%>');
+		$layout 	= JRequest::getCmd('layout', '<%=DefaultView.ToLower()%>');
+		$id		= JRequest::getInt('id');
+
+		// Check for edit form.
+		if ($view == '<%=DefaultView.ToLower()%>' && $layout == 'edit' && !$this->checkEditId('<%=ComponentName%>.edit.<%=DefaultView.ToLower()%>', $id)) {
+			// Somehow the person just went to the form - we don't allow that.
+			$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
+			$this->setMessage($this->getError(), 'error');
+			$this->setRedirect(JRoute::_('index.php?option=<%=ComponentName%>&view=<%=DefaultView.ToLower()%>', false));
+
+			return false;
+		}
+
+		parent::display();
+
+		return $this;
+	}
+}
+<%		
+		output.save(path, "o");
+		output.clear();
+	}
+%>
+##|BODY_END
