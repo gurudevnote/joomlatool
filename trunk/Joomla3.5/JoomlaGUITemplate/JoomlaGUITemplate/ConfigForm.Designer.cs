@@ -58,6 +58,7 @@
             // 
             this.txtOutputFolder.Location = new System.Drawing.Point(150, 13);
             this.txtOutputFolder.Name = "txtOutputFolder";
+            this.txtOutputFolder.Text = "C:\\Documents and Settings\\Administrator\\Desktop\\Component";
             this.txtOutputFolder.Size = new System.Drawing.Size(219, 20);
             this.txtOutputFolder.TabIndex = 1;
             // 
@@ -130,6 +131,7 @@
             // 
             this.txtComponentName.Location = new System.Drawing.Point(150, 95);
             this.txtComponentName.Name = "txtComponentName";
+            this.txtComponentName.Text = "Tuvi";
             this.txtComponentName.Size = new System.Drawing.Size(219, 20);
             this.txtComponentName.TabIndex = 9;
             // 
@@ -147,6 +149,7 @@
             this.txtPrefixTable.Location = new System.Drawing.Point(150, 121);
             this.txtPrefixTable.Name = "txtPrefixTable";
             this.txtPrefixTable.Size = new System.Drawing.Size(219, 20);
+            this.txtPrefixTable.Text = "kdro5_";
             this.txtPrefixTable.TabIndex = 9;
             // 
             // cmdSelectAll

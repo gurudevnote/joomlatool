@@ -1241,7 +1241,6 @@ public partial class GeneratedTemplate
         //output.writeln(path);
     }
 
-    
     void CreateFolder(string path)
     {
         if (string.IsNullOrEmpty(path))

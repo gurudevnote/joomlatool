@@ -271,4 +271,29 @@ public partial class GeneratedTemplate : _DotNetScriptTemplate
     {
         throw new NotImplementedException();
     }
+
+    private void CreateSiteViewForm(string p, string view)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void CreateSiteViewFormMetaData(string p, string view)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void CreateSiteViewFormEditModel(string p, string view)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void CreateSiteViewFormEditTemplateXml(string p, string view)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void CreateSiteViewFormEditTemplate(string p, string view)
+    {
+        throw new NotImplementedException();
+    }
 }
