@@ -43,6 +43,9 @@
             this.txtPrefixTable = new System.Windows.Forms.TextBox();
             this.cmdSelectAll = new System.Windows.Forms.Button();
             this.cmdUnSelectAll = new System.Windows.Forms.Button();
+            this.cmdSaveConfig = new System.Windows.Forms.Button();
+            this.txtPrefixSelect = new System.Windows.Forms.TextBox();
+            this.cmdSelectBytablePrefix = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -58,9 +61,9 @@
             // 
             this.txtOutputFolder.Location = new System.Drawing.Point(150, 13);
             this.txtOutputFolder.Name = "txtOutputFolder";
-            this.txtOutputFolder.Text = "C:\\Documents and Settings\\Administrator\\Desktop\\Component";
             this.txtOutputFolder.Size = new System.Drawing.Size(219, 20);
             this.txtOutputFolder.TabIndex = 1;
+            this.txtOutputFolder.Text = "C:\\Documents and Settings\\Administrator\\Desktop\\Component";
             // 
             // cmdSelectFolder
             // 
@@ -131,9 +134,9 @@
             // 
             this.txtComponentName.Location = new System.Drawing.Point(150, 95);
             this.txtComponentName.Name = "txtComponentName";
-            this.txtComponentName.Text = "Tuvi";
             this.txtComponentName.Size = new System.Drawing.Size(219, 20);
             this.txtComponentName.TabIndex = 9;
+            this.txtComponentName.Text = "Tuvi";
             // 
             // label5
             // 
@@ -149,8 +152,8 @@
             this.txtPrefixTable.Location = new System.Drawing.Point(150, 121);
             this.txtPrefixTable.Name = "txtPrefixTable";
             this.txtPrefixTable.Size = new System.Drawing.Size(219, 20);
-            this.txtPrefixTable.Text = "kdro5_";
             this.txtPrefixTable.TabIndex = 9;
+            this.txtPrefixTable.Text = "kdro5_";
             // 
             // cmdSelectAll
             // 
@@ -172,11 +175,41 @@
             this.cmdUnSelectAll.UseVisualStyleBackColor = true;
             this.cmdUnSelectAll.Click += new System.EventHandler(this.cmdUnSelectAll_Click);
             // 
+            // cmdSaveConfig
+            // 
+            this.cmdSaveConfig.Location = new System.Drawing.Point(231, 371);
+            this.cmdSaveConfig.Name = "cmdSaveConfig";
+            this.cmdSaveConfig.Size = new System.Drawing.Size(129, 24);
+            this.cmdSaveConfig.TabIndex = 10;
+            this.cmdSaveConfig.Text = "Save Config";
+            this.cmdSaveConfig.UseVisualStyleBackColor = true;
+            this.cmdSaveConfig.Click += new System.EventHandler(this.cmdSaveConfig_Click);
+            // 
+            // txtPrefixSelect
+            // 
+            this.txtPrefixSelect.Location = new System.Drawing.Point(385, 243);
+            this.txtPrefixSelect.Name = "txtPrefixSelect";
+            this.txtPrefixSelect.Size = new System.Drawing.Size(100, 20);
+            this.txtPrefixSelect.TabIndex = 11;
+            // 
+            // cmdSelectBytablePrefix
+            // 
+            this.cmdSelectBytablePrefix.Location = new System.Drawing.Point(385, 269);
+            this.cmdSelectBytablePrefix.Name = "cmdSelectBytablePrefix";
+            this.cmdSelectBytablePrefix.Size = new System.Drawing.Size(75, 23);
+            this.cmdSelectBytablePrefix.TabIndex = 12;
+            this.cmdSelectBytablePrefix.Text = "Select table";
+            this.cmdSelectBytablePrefix.UseVisualStyleBackColor = true;
+            this.cmdSelectBytablePrefix.Click += new System.EventHandler(this.cmdSelectBytablePrefix_Click);
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(503, 407);
+            this.ClientSize = new System.Drawing.Size(580, 424);
+            this.Controls.Add(this.cmdSelectBytablePrefix);
+            this.Controls.Add(this.txtPrefixSelect);
+            this.Controls.Add(this.cmdSaveConfig);
             this.Controls.Add(this.txtPrefixTable);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtComponentName);
@@ -216,6 +249,9 @@
         private System.Windows.Forms.TextBox txtPrefixTable;
         private System.Windows.Forms.Button cmdSelectAll;
         private System.Windows.Forms.Button cmdUnSelectAll;
+        private System.Windows.Forms.Button cmdSaveConfig;
+        private System.Windows.Forms.TextBox txtPrefixSelect;
+        private System.Windows.Forms.Button cmdSelectBytablePrefix;
     }
 }
 

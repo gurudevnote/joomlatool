@@ -15,15 +15,6 @@ using MyMeta;
 using System.Xml.Serialization;
 namespace JoomlaGUITemplate
 {
-
-    public class XmlConfig
-    {
-        public string OutPutPath { set; get; }
-        public string ComponentName { set; get; }
-        public string PrefixTable { set; get; }
-        public List<string> SelectedTables { set; get; }
-    }
-    
     public partial class ConfigForm : Form
     {
         private dbRoot myMeta;
@@ -57,6 +48,7 @@ namespace JoomlaGUITemplate
                 txtOutputFolder.Text = config.OutPutPath;
                 txtComponentName.Text = config.ComponentName;
                 txtPrefixTable.Text = config.PrefixTable;
+                txtPrefixSelect.Text = config.PrefixTableForSelect;
             }
             
             if (this.myMeta.Databases[0] != null)
@@ -69,12 +61,13 @@ namespace JoomlaGUITemplate
                 for (int i = 0; i < size; i++)
                 {
                     ITable tb = this.lboxTables.Items[i] as ITable;
-                    //if (tb != null
-                    //    && (tb.Name.ToLower().StartsWith("kdro5_tuvi"))
-                    //)
-                    //{
-                    //    lboxTables.SetSelected(i, true);
-                    //}
+                    if (tb != null
+                        && !string.IsNullOrEmpty(txtPrefixSelect.Text)
+                        && (tb.Name.ToLower().StartsWith(txtPrefixSelect.Text.ToLower()))
+                    )
+                    {
+                        lboxTables.SetSelected(i, true);
+                    }
                     if (config != null && config.SelectedTables != null)
                     {
                         if (config.SelectedTables.Contains(tb.Name))
@@ -104,21 +97,7 @@ namespace JoomlaGUITemplate
         {
             if ((lboxTables.SelectedIndex >= 0) && txtOutputFolder.Text != "" && txtComponentName.Text != "")
             {
-                XmlConfig config = new XmlConfig();
-                config.ComponentName = txtComponentName.Text;
-                config.OutPutPath = txtOutputFolder.Text;
-                config.PrefixTable = txtPrefixTable.Text;
-                config.SelectedTables = new List<string>();
-                foreach (ITable it in lboxTables.SelectedItems)
-                {
-                    config.SelectedTables.Add(it.Name);
-                }
-
-                XmlSerializer serializer = new XmlSerializer(typeof(XmlConfig));
-                using (TextWriter writer = new StreamWriter(_configFileName))
-                {
-                    serializer.Serialize(writer, config);
-                }
+                SaveConfigToXmlFile();
 
                 this.zeusInput["tableName"] = lboxTables.SelectedItems;
                 this.zeusInput["Prefix"] = txtPrefixTable.Text;
@@ -129,6 +108,26 @@ namespace JoomlaGUITemplate
             else
             {
                 MessageBox.Show("Please choose a Table or select a path");
+            }
+        }
+
+        private void SaveConfigToXmlFile()
+        {
+            XmlConfig config = new XmlConfig();
+            config.ComponentName = txtComponentName.Text;
+            config.OutPutPath = txtOutputFolder.Text;
+            config.PrefixTable = txtPrefixTable.Text;
+            config.PrefixTableForSelect = txtPrefixSelect.Text;
+            config.SelectedTables = new List<string>();
+            foreach (ITable it in lboxTables.SelectedItems)
+            {
+                config.SelectedTables.Add(it.Name);
+            }
+
+            XmlSerializer serializer = new XmlSerializer(typeof(XmlConfig));
+            using (TextWriter writer = new StreamWriter(_configFileName))
+            {
+                serializer.Serialize(writer, config);
             }
         }
 
@@ -150,5 +149,34 @@ namespace JoomlaGUITemplate
         {
 
         }
+
+        private void cmdSaveConfig_Click(object sender, EventArgs e)
+        {
+            SaveConfigToXmlFile();
+        }
+
+        private void cmdSelectBytablePrefix_Click(object sender, EventArgs e)
+        {
+            int size = this.lboxTables.Items.Count;
+            for (int i = 0; i < size; i++)
+            {
+                ITable tb = this.lboxTables.Items[i] as ITable;
+                if (tb != null
+                    && (tb.Name.ToLower().StartsWith(txtPrefixSelect.Text.ToLower()))
+                )
+                {
+                    lboxTables.SetSelected(i, true);
+                }                
+            }
+        }
+    }
+
+    public class XmlConfig
+    {
+        public string OutPutPath { set; get; }
+        public string ComponentName { set; get; }
+        public string PrefixTable { set; get; }
+        public string PrefixTableForSelect { set; get; }
+        public List<string> SelectedTables { set; get; }
     }
 }
