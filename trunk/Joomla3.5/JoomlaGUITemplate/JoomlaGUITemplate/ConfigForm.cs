@@ -49,6 +49,7 @@ namespace JoomlaGUITemplate
                 txtComponentName.Text = config.ComponentName;
                 txtPrefixTable.Text = config.PrefixTable;
                 txtPrefixSelect.Text = config.PrefixTableForSelect;
+                cbAutoGenerate.Checked = config.IsAutoGeneration;
             }
             
             if (this.myMeta.Databases[0] != null)
@@ -79,6 +80,11 @@ namespace JoomlaGUITemplate
 
             }
             this.zeusInput["path"] = txtOutputFolder.Text;
+
+            if (config.IsAutoGeneration)
+            {
+                Generate();
+            }
         }
 
         public ConfigForm()
@@ -95,15 +101,20 @@ namespace JoomlaGUITemplate
 
         private void cmdGenerate_Click(object sender, EventArgs e)
         {
+            Generate();
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void Generate()
+        {
             if ((lboxTables.SelectedIndex >= 0) && txtOutputFolder.Text != "" && txtComponentName.Text != "")
             {
                 SaveConfigToXmlFile();
 
                 this.zeusInput["tableName"] = lboxTables.SelectedItems;
                 this.zeusInput["Prefix"] = txtPrefixTable.Text;
-                this.zeusInput["ComponentName"] = txtComponentName.Text;
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                this.zeusInput["ComponentName"] = txtComponentName.Text;                
             }
             else
             {
@@ -119,6 +130,7 @@ namespace JoomlaGUITemplate
             config.PrefixTable = txtPrefixTable.Text;
             config.PrefixTableForSelect = txtPrefixSelect.Text;
             config.SelectedTables = new List<string>();
+            config.IsAutoGeneration = cbAutoGenerate.Checked;
             foreach (ITable it in lboxTables.SelectedItems)
             {
                 config.SelectedTables.Add(it.Name);
@@ -169,11 +181,19 @@ namespace JoomlaGUITemplate
                 }                
             }
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+            base.OnClosed(e);
+        }
     }
 
     public class XmlConfig
     {
         public string OutPutPath { set; get; }
+        public bool IsAutoGeneration { set; get; }
         public string ComponentName { set; get; }
         public string PrefixTable { set; get; }
         public string PrefixTableForSelect { set; get; }

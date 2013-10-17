@@ -46,6 +46,7 @@
             this.cmdSaveConfig = new System.Windows.Forms.Button();
             this.txtPrefixSelect = new System.Windows.Forms.TextBox();
             this.cmdSelectBytablePrefix = new System.Windows.Forms.Button();
+            this.cbAutoGenerate = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -136,7 +137,6 @@
             this.txtComponentName.Name = "txtComponentName";
             this.txtComponentName.Size = new System.Drawing.Size(219, 20);
             this.txtComponentName.TabIndex = 9;
-            this.txtComponentName.Text = "Tuvi";
             // 
             // label5
             // 
@@ -202,11 +202,22 @@
             this.cmdSelectBytablePrefix.UseVisualStyleBackColor = true;
             this.cmdSelectBytablePrefix.Click += new System.EventHandler(this.cmdSelectBytablePrefix_Click);
             // 
+            // cbAutoGenerate
+            // 
+            this.cbAutoGenerate.AutoSize = true;
+            this.cbAutoGenerate.Location = new System.Drawing.Point(386, 310);
+            this.cbAutoGenerate.Name = "cbAutoGenerate";
+            this.cbAutoGenerate.Size = new System.Drawing.Size(135, 17);
+            this.cbAutoGenerate.TabIndex = 14;
+            this.cbAutoGenerate.Text = "Auto Generate Source ";
+            this.cbAutoGenerate.UseVisualStyleBackColor = true;
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(580, 424);
+            this.Controls.Add(this.cbAutoGenerate);
             this.Controls.Add(this.cmdSelectBytablePrefix);
             this.Controls.Add(this.txtPrefixSelect);
             this.Controls.Add(this.cmdSaveConfig);
@@ -252,6 +263,7 @@
         private System.Windows.Forms.Button cmdSaveConfig;
         private System.Windows.Forms.TextBox txtPrefixSelect;
         private System.Windows.Forms.Button cmdSelectBytablePrefix;
+        private System.Windows.Forms.CheckBox cbAutoGenerate;
     }
 }
 
