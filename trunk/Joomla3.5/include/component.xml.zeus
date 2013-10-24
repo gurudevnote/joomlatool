@@ -19,7 +19,7 @@
 	
 %><?xml version="1.0" encoding="utf-8"?>
 <extension type="component"  version="1.7" method="upgrade">
-	<name><%=componentName%></name>
+	<name><%=ComponentClassName%></name>
 	<creationDate><%=DateTime.Now.ToString()%></creationDate>
 	<author><%=authorName%></author>
 	<authorEmail><%=authorEmail%></authorEmail>
@@ -27,7 +27,7 @@
 	<copyright>Copyright Info</copyright>
 	<license>License Info</license>	
 	<version>0.0.1</version>
-	<description>Description of the <%=componentName%> component ...</description>
+	<description>Description of the <%=ComponentClassName%> component ...</description>
 	<update>
 		<schemas>
 			<schemapath type="mysql">sql/updates/mysql</schemapath>
