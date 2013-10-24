@@ -41,9 +41,20 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 //======================DEFINE INSTALL==============================================
 %><%#FILECOMPILE include/component.xml.zeus%><%
 //============================END===================================================
+
+
+
 //======================Administrator===============================================
 %><%#FILECOMPILE include/component/admin/access.xml.zeus%><%
+%><%#FILECOMPILE include/component/admin/config.xml.zeus%><%
+%><%#FILECOMPILE include/component/admin/controller.php.zeus%><%
 //=========================END======================================================
+
+
+
+//======================Site: front end===============================================
+//=========================END======================================================
+
 %><%#FILECOMPILE include/createSqlInstallFile.zeus%><%
 %><%#FILECOMPILE include/createSqlUnInstallFile.zeus%><%
 %><%#FILECOMPILE include/CreateEnglishResourceFile.zeus%><%
@@ -67,9 +78,7 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 %><%#FILECOMPILE include/AdminTable.zeus%><%
 %><%#FILECOMPILE include/AdminControllerEdit.zeus%><%
 %><%#FILECOMPILE include/AdminControllerFile.zeus%><%
-%><%#FILECOMPILE include/AdminComponentFile.zeus%><%
 %><%#FILECOMPILE include/IndexHtmlFile.zeus%><%
-%><%#FILECOMPILE include/AdminComponentConfigXml.zeus%><%
 %><%#FILECOMPILE include/SiteControllerFile.zeus%><%
 %><%#FILECOMPILE include/site/SiteComponentFile.zeus%><%
 %><%#FILECOMPILE include/site/SiteRouteFile.zeus%><%
