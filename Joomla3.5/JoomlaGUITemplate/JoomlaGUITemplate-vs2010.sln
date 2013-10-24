@@ -4,6 +4,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{FFD624E9-6B1A-455B-B5F4-F74DF4C33A30}"
 	ProjectSection(SolutionItems) = preProject
 		JoomlaGUITemplate\lib\Dnp.Utils.dll = JoomlaGUITemplate\lib\Dnp.Utils.dll
+		JoomlaGUITemplate\lib\ICSharpCode.SharpZipLib.dll = JoomlaGUITemplate\lib\ICSharpCode.SharpZipLib.dll
 		JoomlaGUITemplate\lib\MyMeta.dll = JoomlaGUITemplate\lib\MyMeta.dll
 		JoomlaGUITemplate\lib\Zeus.dll = JoomlaGUITemplate\lib\Zeus.dll
 	EndProjectSection
