@@ -7,6 +7,8 @@ using IForeignKey = MyMeta.IForeignKey;
 using Regex = System.Text.RegularExpressions.Regex;
 using ZeusContext = Zeus.ZeusContext;
 using System;
+using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpZipLib.Core;
 public partial class GeneratedTemplate
 {
     public string ExtendsFileName 
@@ -1239,6 +1241,23 @@ public partial class GeneratedTemplate
         output.writeln("Start Time: " + start.ToString());
         output.writeln("End Time  : " + end.ToString());
         //output.writeln(path);
+
+        //Zip folder
+        FastZip fastZip = new FastZip();
+        string zipFileSource = path + "\\" + componentName;
+        string zipFilePath = path + "\\" + componentName.ToLower()+".zip";
+
+        //System.Diagnostics.Debugger.Break();
+        try
+        {
+            fastZip.CreateZip(zipFilePath, zipFileSource, true, "");
+        }
+        catch (Exception ex)
+        {
+            output.writeln(ex.Message + "\n" + ex.StackTrace);
+        }
+        output.writeln("Componnent Directory: " + zipFilePath);
+        output.writeln("Zip file path: " + zipFileSource);
     }
 
     void CreateFolder(string path)

@@ -114,7 +114,18 @@ namespace JoomlaGUITemplate
 
                 this.zeusInput["tableName"] = lboxTables.SelectedItems;
                 this.zeusInput["Prefix"] = txtPrefixTable.Text;
-                this.zeusInput["ComponentName"] = txtComponentName.Text;                
+                this.zeusInput["ComponentName"] = txtComponentName.Text;
+                string zipFile = txtOutputFolder.Text + "\\" + "com_" + txtComponentName.Text.ToLower() + ".zip";
+                string componentDirectory = txtOutputFolder.Text + "\\" + "com_" + txtComponentName.Text.ToLower();
+                if (File.Exists(zipFile))
+                {
+                    File.Delete(zipFile);
+                }
+
+                if (Directory.Exists(componentDirectory))
+                {
+                    Directory.Delete(componentDirectory, true);
+                }
             }
             else
             {
