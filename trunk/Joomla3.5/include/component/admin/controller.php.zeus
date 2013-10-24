@@ -1,0 +1,82 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE AdminComponentFile
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateAdminComponentFile(string path)
+	{
+		output.clear();
+%><?php
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  <%=ComponentName%>
+ *
+ * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+defined('_JEXEC') or die;
+
+/**
+ * Component Controller
+ *
+ * @package     Joomla.Administrator
+ * @subpackage  <%=ComponentName%>
+ * @since       1.5
+ */
+class <%=ComponentClassName%>Controller extends JControllerLegacy
+{
+	/**
+	 * @var		string	The default view.
+	 * @since   1.6
+	 */
+	protected $default_view = '<%=DefaultView.ToLower()%>';
+
+	/**
+	 * Method to display a view.
+	 *
+	 * @param   boolean			If true, the view output will be cached
+	 * @param   array  An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+	 *
+	 * @return  JController		This object to support chaining.
+	 *
+	 * @since   1.5
+	 */
+	public function display($cachable = false, $urlparams = false)
+	{
+		$view   = $this->input->get('view', '<%=DefaultView.ToLower()%>');
+		$layout = $this->input->get('layout', '<%=DefaultView.ToLower()%>');
+		$id     = $this->input->getInt('id');
+
+		// Check for edit form.
+		if ($view == '<%=GetEditView(DefaultView).ToLower()%>' && $layout == 'edit' && !$this->checkEditId('<%=ComponentName.ToLower()%>.edit.<%=GetEditView(DefaultView).ToLower()%>', $id))
+		{
+			// Somehow the person just went to the form - we don't allow that.
+			$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
+			$this->setMessage($this->getError(), 'error');
+			$this->setRedirect(JRoute::_('index.php?option=<%=ComponentName.ToLower()%>&view=<%=DefaultView.ToLower()%>', false));
+
+			return false;
+		}
+
+		parent::display();
+
+		return $this;
+	}
+}
+<%		
+		output.save(path, "o");
+		output.clear();
+	}
+%>
+##|BODY_END
