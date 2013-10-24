@@ -38,6 +38,12 @@ public class GeneratedGui : DotNetScriptGui
 <%#REFERENCE ICSharpCode.SharpZipLib.dll %><%#DEBUG%><%#FILE JoomlaGUITemplate/JoomlaGUITemplate/CommonFunction.cs %><%
 public partial class GeneratedTemplate : DotNetScriptTemplate
 {
+//======================DEFINE INSTALL==============================================
+%><%#FILECOMPILE include/component.xml.zeus%><%
+//============================END===================================================
+//======================Administrator===============================================
+%><%#FILECOMPILE include/component/admin/access.xml.zeus%><%
+//=========================END======================================================
 %><%#FILECOMPILE include/createSqlInstallFile.zeus%><%
 %><%#FILECOMPILE include/createSqlUnInstallFile.zeus%><%
 %><%#FILECOMPILE include/CreateEnglishResourceFile.zeus%><%
@@ -63,9 +69,7 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 %><%#FILECOMPILE include/AdminControllerFile.zeus%><%
 %><%#FILECOMPILE include/AdminComponentFile.zeus%><%
 %><%#FILECOMPILE include/IndexHtmlFile.zeus%><%
-%><%#FILECOMPILE include/AccessXmlFile.zeus%><%
 %><%#FILECOMPILE include/AdminComponentConfigXml.zeus%><%
-%><%#FILECOMPILE include/ComponentXmlContentFile.zeus%><%
 %><%#FILECOMPILE include/SiteControllerFile.zeus%><%
 %><%#FILECOMPILE include/site/SiteComponentFile.zeus%><%
 %><%#FILECOMPILE include/site/SiteRouteFile.zeus%><%
