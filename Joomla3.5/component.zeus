@@ -35,7 +35,7 @@ public class GeneratedGui : DotNetScriptGui
 ##|BODY_TAG_START <%
 ##|BODY_TAG_END %>
 ##|BODY_BEGIN
-<%#DEBUG%><%#FILE JoomlaGUITemplate/JoomlaGUITemplate/CommonFunction.cs %><%
+<%#REFERENCE ICSharpCode.SharpZipLib.dll %><%#DEBUG%><%#FILE JoomlaGUITemplate/JoomlaGUITemplate/CommonFunction.cs %><%
 public partial class GeneratedTemplate : DotNetScriptTemplate
 {
 %><%#FILECOMPILE include/createSqlInstallFile.zeus%><%
