@@ -397,7 +397,10 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 			$orderCol = 'ag.title';
 		}		
 		
-		$query->order($db->getEscaped($orderCol.' '.$orderDirn));
+		if($orderCol != "")
+		{
+			$query->order($db->escape($orderCol . ' ' . $orderDirn));
+		}
 
 		return $query;
 	}
