@@ -72,7 +72,7 @@
 		</language>		
 	</languages>	
 	<administration>
-		<menu img="class:component"><%=componentName%></menu>
+		<menu img="class:component"><%=ComponentClassName%></menu>
 		<submenu>
 			<!--
 				Note that all & must be escaped to &amp; for the file to be valid
