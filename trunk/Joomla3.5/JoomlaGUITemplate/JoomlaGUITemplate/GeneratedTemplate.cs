@@ -32,6 +32,12 @@ public partial class GeneratedTemplate : _DotNetScriptTemplate
         this.DnpUtils = context.Objects["DnpUtils"] as Dnp.Utils.Utils;
 	}
 
+
+    private void CreateFormListFilter(string p, string view)
+    {
+        throw new NotImplementedException();
+    }
+
     private void GetComponentXmlContentFile(string ComponentName, string p, string p_3, List<string> siteFiles, List<string> adminFiles)
     {
         throw new System.NotImplementedException();
