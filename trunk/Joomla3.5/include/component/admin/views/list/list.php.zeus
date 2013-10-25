@@ -21,25 +21,23 @@
 		tableName = tableName.ToUpper();
 		output.clear();
 %><?php
-/**
- * @version		$Id: view.html.php 22355 2011-11-07 05:11:58Z github_bot $
- * @package		Joomla.Administrator
- * @subpackage	<%=ComponentName%>
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ /**
+ * @package     Joomla.Administrator
+ * @subpackage  <%=ComponentName%>
+ *
+ * author huuhuy@gmail.com
+ * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// No direct access
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.view');
 
 /**
  * View class for a list of articles.
  *
- * @package		Joomla.Administrator
- * @subpackage	<%=ComponentName%>
- * @since		1.6
+ * @package     Joomla.Administrator
+ * @subpackage  com_content
+ * @since       1.6
  */
 class <%=ComponentClassName%>View<%=view%> extends JViewLegacy
 {
@@ -50,29 +48,54 @@ class <%=ComponentClassName%>View<%=view%> extends JViewLegacy
 	/**
 	 * Display the view
 	 *
-	 * @return	void
+	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+	 *
+	 * @return  void
 	 */
 	public function display($tpl = null)
 	{		
-		// Access check.
+		if ($this->getLayout() !== 'modal')
+		{
+			ContentHelper::addSubmenu('<%=view.ToLower()%>');
+		}		
+		
+		// Access check. HuyNH add code to check permission for see ther viewer
 		if (!JFactory::getUser()->authorise('core.manage', '<%=ComponentName%>.assetview.<%=view.ToLower()%>')) {
 			return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
 		}
 		
-		$this->items		= $this->get('Items');
-		$this->pagination	= $this->get('Pagination');
-		$this->state		= $this->get('State');
-		$this->authors		= $this->get('Authors');
+		$this->items         = $this->get('Items');
+		$this->pagination    = $this->get('Pagination');
+		$this->state         = $this->get('State');
+		$this->authors       = $this->get('Authors');
+		$this->filterForm    = $this->get('FilterForm');
+		$this->activeFilters = $this->get('ActiveFilters');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
+		
+		// Levels filter.
+		$options	= array();
+		$options[]	= JHtml::_('select.option', '1', JText::_('J1'));
+		$options[]	= JHtml::_('select.option', '2', JText::_('J2'));
+		$options[]	= JHtml::_('select.option', '3', JText::_('J3'));
+		$options[]	= JHtml::_('select.option', '4', JText::_('J4'));
+		$options[]	= JHtml::_('select.option', '5', JText::_('J5'));
+		$options[]	= JHtml::_('select.option', '6', JText::_('J6'));
+		$options[]	= JHtml::_('select.option', '7', JText::_('J7'));
+		$options[]	= JHtml::_('select.option', '8', JText::_('J8'));
+		$options[]	= JHtml::_('select.option', '9', JText::_('J9'));
+		$options[]	= JHtml::_('select.option', '10', JText::_('J10'));
+
+		$this->f_levels = $options;		
 
 		// We don't need toolbar in the modal window.
 		if ($this->getLayout() !== 'modal') {
 			$this->addToolbar();
+			$this->sidebar = JHtmlSidebar::render();
 		}
 
 		parent::display($tpl);
