@@ -57,6 +57,8 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 %><%#FILECOMPILE include/component/admin/models/AdminModelList.zeus%><%
 %><%#FILECOMPILE include/component/admin/models/AdminModelEdit.zeus%><%
 
+%><%#FILECOMPILE include/component/admin/models/forms/filter_list.xml.zeus%><%
+
 %><%#FILECOMPILE include/AdminModelFieldsModal.zeus%><%
 %><%#FILECOMPILE include/AdminHelper.zeus%><%
 %><%#FILECOMPILE include/AdminControllerList.zeus%><%
