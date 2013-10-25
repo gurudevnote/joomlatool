@@ -1,0 +1,192 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE AdminViewEdit
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateAdminViewEdit(string path, string view)
+	{
+		output.clear();
+		string componenNameUpper = ComponentName.ToUpper();
+		ITable table = GetTableFromView(view);
+		string tableForMultipleLang = GetTableNameForMultipleLanguage(table);
+		tableForMultipleLang = tableForMultipleLang.ToUpper();
+		string primaryKey = GetPrimaryColumnName(table);
+%><?php
+/**
+ * @version		$Id: view.html.php huuhuy $
+ * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+// No direct access
+defined('_JEXEC') or die;
+
+jimport('joomla.application.component.view');
+
+/**
+ * View to edit an <%=view.ToLower()%>.
+ *
+ * @package		Joomla.Administrator
+ * @subpackage	<%=ComponentName%>
+ * @since		1.6
+ */
+class <%=ComponentClassName%>View<%=view%> extends JViewLegacy
+{
+	protected $form;
+	protected $item;
+	protected $state;
+
+	/**
+	 * Display the view
+	 */
+	public function display($tpl = null)
+	{
+		if (!JFactory::getUser()->authorise('core.manage', '<%=ComponentName%>.assetview.<%=GetListView(view).ToLower()%>')) {
+			return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+		}
+		
+		if ($this->getLayout() == 'pagebreak') {
+			// TODO: This is really dogy - should change this one day.
+			$eName		= JRequest::getVar('e_name');
+			$eName		= preg_replace( '#[^A-Z0-9\-\_\[\]]#i', '', $eName );
+			$document	= JFactory::getDocument();
+			$document->setTitle(JText::_('<%=ComponentName.ToUpper()%>_PAGEBREAK_DOC_TITLE'));
+			$this->assignRef('eName', $eName);
+			parent::display($tpl);
+			return;
+		}
+
+		// Initialiase variables.
+		$this->form		= $this->get('Form');
+		$this->item		= $this->get('Item');
+		$this->state	= $this->get('State');
+<%
+if(IsContainColumn(table,"catid"))
+{	
+%>		
+		$this->canDo	= <%=ComponentClassName%>Helper::getActions($this->state->get('filter.category_id'));
+<%
+}
+else
+{
+%>
+		$this->canDo	= <%=ComponentClassName%>Helper::getActionsBySection("<%=view.ToLower()%>",$this->item-><%=primaryKey%>);
+<%
+}
+%>
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			JError::raiseError(500, implode("\n", $errors));
+			return false;
+		}
+
+		$this->addToolbar();
+		parent::display($tpl);
+	}
+
+	/**
+	 * Add the page title and toolbar.
+	 *
+	 * @since	1.6
+	 */
+	protected function addToolbar()
+	{
+		JRequest::setVar('hidemainmenu', true);
+		$user		= JFactory::getUser();
+		$userId		= $user->get('id');
+		$isNew		= ($this->item-><%=primaryKey%> == 0);
+<%
+if(IsContainColumn(table,"checked_out"))
+{
+%>
+		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $userId);
+<%
+}
+else
+{
+%>
+		$checkedOut	=  false;
+<%
+}
+%>		
+<%
+if(IsContainColumn(table,"catid"))
+{
+%>		
+		$canDo		= <%=ComponentClassName%>Helper::getActions($this->state->get('filter.category_id'), $this->item-><%=primaryKey%>);
+<%
+}
+else
+{
+%>
+		$canDo		= <%=ComponentClassName%>Helper::getActionsBySection("<%=view.ToLower()%>", $this->item-><%=primaryKey%>);
+<%
+}
+%>
+		JToolBarHelper::title(JText::_('<%=componenNameUpper%>_'.($checkedOut ? 'VIEW_<%=tableForMultipleLang%>' : ($isNew ? 'NEW_<%=tableForMultipleLang%>' : 'EDIT_<%=tableForMultipleLang%>'))), 'article-add.png');
+
+		// Built the actions for new and existing records.
+
+		// For new records, check the create permission.
+		if ($isNew && (count($user->getAuthorisedCategories('<%=ComponentName%>', 'core.create')) > 0)) {
+			JToolBarHelper::apply('<%=view.ToLower()%>.apply');
+			JToolBarHelper::save('<%=view.ToLower()%>.save');
+			JToolBarHelper::save2new('<%=view.ToLower()%>.save2new');
+			JToolBarHelper::cancel('<%=view.ToLower()%>.cancel');
+		}
+		else {
+			// Can't save the record if it's checked out.
+			if (!$checkedOut) {
+				// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
+<%
+if(IsContainColumn(table,"created_by"))
+{
+%>				
+				if ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId)) {
+<%
+}
+else
+{
+%>
+				if ($canDo->get('core.edit') ) {
+<%
+}
+%>				
+					JToolBarHelper::apply('<%=view.ToLower()%>.apply');
+					JToolBarHelper::save('<%=view.ToLower()%>.save');
+
+					// We can save this record, but check the create permission to see if we can return to make a new one.
+					if ($canDo->get('core.create')) {
+						JToolBarHelper::save2new('<%=view.ToLower()%>.save2new');
+					}
+				}
+			}
+
+			// If checked out, we can still save
+			if ($canDo->get('core.create')) {
+				JToolBarHelper::save2copy('<%=view.ToLower()%>.save2copy');
+			}
+
+			JToolBarHelper::cancel('<%=view.ToLower()%>.cancel', 'JTOOLBAR_CLOSE');
+		}
+
+		JToolBarHelper::divider();
+		JToolBarHelper::help('JHELP_CONTENT_ARTICLE_MANAGER_EDIT');
+	}
+}
+<%		
+		output.save(path, "o");
+		output.clear();		
+	}
+%>
+##|BODY_END

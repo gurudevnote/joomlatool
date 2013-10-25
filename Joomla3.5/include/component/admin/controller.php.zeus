@@ -1,6 +1,6 @@
 ﻿##|TYPE Function
 ##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
-##|TITLE AdminComponentFile
+##|TITLE Admin Controller Component File
 ##|NAMESPACE 
 ##|SOURCE_TYPE Source
 ##|OUTPUT_LANGUAGE C#
@@ -13,7 +13,7 @@
 ##|BODY_TAG_END %>
 ##|BODY_BEGIN
 <%
-	public void CreateAdminComponentFile(string path)
+	public void CreateAdminControllerFile(string path)
 	{
 		output.clear();
 %><?php
