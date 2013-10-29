@@ -51,6 +51,7 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 %><%#FILECOMPILE include/component/admin/component.php.zeus%><%
 
 %><%#FILECOMPILE include/component/admin/views/list/list.php.zeus%><%
+%><%#FILECOMPILE include/component/admin/views/list/tmpl/AdminViewTemplateList.php.zeus%><%
 
 %><%#FILECOMPILE include/component/admin/views/edit/edit.php.zeus%><%
 
@@ -58,6 +59,11 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 %><%#FILECOMPILE include/component/admin/models/AdminModelEdit.zeus%><%
 
 %><%#FILECOMPILE include/component/admin/models/forms/filter_list.xml.zeus%><%
+
+%><%#FILECOMPILE include/AdminViewTemplateEditMeta.zeus%><%
+%><%#FILECOMPILE include/AdminViewTemplateEdit.zeus%><%
+%><%#FILECOMPILE include/AdminViewTemplateListModal.zeus%><%
+%><%#FILECOMPILE include/AdminModelFieldsEdit.zeus%><%
 
 %><%#FILECOMPILE include/AdminModelFieldsModal.zeus%><%
 %><%#FILECOMPILE include/AdminHelper.zeus%><%
@@ -78,11 +84,6 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 %><%#FILECOMPILE include/CreateSysEnglishResourceFile.zeus%><%
 %><%#FILECOMPILE include/CreateSysVNResourceFile.zeus%><%
 %><%#FILECOMPILE include/CreateFile.zeus%><%
-%><%#FILECOMPILE include/AdminViewTemplateEditMeta.zeus%><%
-%><%#FILECOMPILE include/AdminViewTemplateEdit.zeus%><%
-%><%#FILECOMPILE include/AdminViewTemplateList.zeus%><%
-%><%#FILECOMPILE include/AdminViewTemplateListModal.zeus%><%
-%><%#FILECOMPILE include/AdminModelFieldsEdit.zeus%><%
 %><%#FILECOMPILE include/Form.zeus%><%
 %><%#FILECOMPILE include/IndexHtmlFile.zeus%><%
 %><%#FILECOMPILE include/SiteControllerFile.zeus%><%
