@@ -1,0 +1,311 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE AdminViewTemplateList
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateAdminViewTemplateList(string path, string model)
+	{
+		ITable table = GetTableFromView(model);
+		string primaryColumnName = GetPrimaryColumnName(table);
+		if(string.IsNullOrEmpty(primaryColumnName))
+		{
+			primaryColumnName = "id";
+		}
+		primaryColumnName = primaryColumnName.ToLower();
+		string groupName = GetGroupColumnNameFromTable(table);
+		if(string.IsNullOrEmpty(groupName))
+		{
+			groupName = "catid";
+		}
+		output.clear();
+%><?php
+/**
+ * @version		$Id: default.php 21837 2011-07-12 18:12:35Z dextercowley $
+ * @package		Joomla.Administrator
+ * @subpackage	<%=ComponentName%>
+ * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+// no direct access
+defined('_JEXEC') or die;
+
+JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+JHtml::_('behavior.tooltip');
+JHtml::_('behavior.multiselect');
+
+$user		= JFactory::getUser();
+$userId		= $user->get('id');
+$listOrder	= $this->escape($this->state->get('list.ordering'));
+$listDirn	= $this->escape($this->state->get('list.direction'));
+$saveOrder	= $listOrder == 'a.ordering';
+?>
+<form action="<?php echo JRoute::_('index.php?option=<%=ComponentName%>&view=<%=model.ToLower()%>');?>" method="post" name="adminForm" id="adminForm">
+	<fieldset id="filter-bar">
+		<div class="filter-search fltlft">
+			<label class="filter-search-lbl" for="filter_search"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?></label>
+			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" title="<?php echo JText::_('COM_CONTENT_FILTER_SEARCH_DESC'); ?>" />
+
+			<button type="submit" class="btn"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+		</div>
+		<div class="filter-select fltrt">
+			<select name="filter_published" class="inputbox" onchange="this.form.submit()">
+				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
+				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true);?>
+			</select>
+			<%if(IsContainColumn(table,"catid"))
+			{
+			%>
+			<select name="filter_category_id" class="inputbox" onchange="this.form.submit()">
+				<option value=""><?php echo JText::_('JOPTION_SELECT_CATEGORY');?></option>
+				<?php echo JHtml::_('select.options', JHtml::_('category.options', '<%=ComponentName%>'), 'value', 'text', $this->state->get('filter.category_id'));?>
+			</select>
+			<%}%>
+			<%if(IsContainColumn(table,"access"))
+			{
+			%>
+			<select name="filter_access" class="inputbox" onchange="this.form.submit()">
+				<option value=""><?php echo JText::_('JOPTION_SELECT_ACCESS');?></option>
+				<?php echo JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
+			</select>
+			<%}%>
+			<%if(IsContainColumn(table,"created_by"))
+			{
+			%>
+			<select name="filter_author_id" class="inputbox" onchange="this.form.submit()">
+				<option value=""><?php echo JText::_('JOPTION_SELECT_AUTHOR');?></option>
+				<?php echo JHtml::_('select.options', $this->authors, 'value', 'text', $this->state->get('filter.author_id'));?>
+			</select>
+			<%}%>
+			<%if(IsContainColumn(table,"language"))
+			{
+			%>
+			<select name="filter_language" class="inputbox" onchange="this.form.submit()">
+				<option value=""><?php echo JText::_('JOPTION_SELECT_LANGUAGE');?></option>
+				<?php echo JHtml::_('select.options', JHtml::_('contentlanguage.existing', true, true), 'value', 'text', $this->state->get('filter.language'));?>
+			</select>
+			<%}%>
+		</div>
+	</fieldset>
+	<div class="clr"> </div>
+
+	<table class="adminlist">
+		<thead>
+			<tr>
+				<th width="1%">
+					<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+				</th>
+				<%
+				IList<string> fieldsDonotDisplay = FieldsDonotDisplayAtModalListView;
+				int columnSize = 0;
+				string thwidth = "width='126px'";
+				IList<IColumn> listColumns = GetListColumnOrder(table);
+				foreach(IColumn column in listColumns)
+				{
+					string columnName = column.Name.ToLower();
+					if(fieldsDonotDisplay.Contains(columnName))
+					continue;
+					columnSize++;
+					
+					if(!columnName.Equals("ordering"))
+					{
+						thwidth = "";
+					}
+					else
+					{
+						thwidth = "width='126px'";
+					}
+					
+				%><th>
+					<%switch(columnName)
+					{
+						case "ordering":						
+					%><?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ORDERING', 'a.ordering', $listDirn, $listOrder); ?>
+					<?php if ($saveOrder) :?>
+						<?php echo JHtml::_('grid.order',  $this->items, 'filesave.png', '<%=model.ToLower()%>.saveorder'); ?>
+					<?php endif; ?><%						
+							break;
+						case "catid":
+					%><?php echo JHtml::_('grid.sort', 'JCATEGORY', 'category_title', $listDirn, $listOrder); ?><%
+							break;
+						case "created_by":
+					%><?php echo JHtml::_('grid.sort', 'JGRID_HEADING_CREATED_BY', 'a.created_by', $listDirn, $listOrder); ?><%
+							break;
+						case "access":
+					%><?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?><%
+							break;
+						case "language":
+					%><?php echo JHtml::_('grid.sort', 'JGRID_HEADING_LANGUAGE', 'language', $listDirn, $listOrder); ?><%
+							break;	
+						default:						
+					%><?php echo JHtml::_('grid.sort', '<%=columnName%>', 'a.<%=columnName%>', $listDirn, $listOrder); ?><%
+							break;
+					}%>					
+				</th>
+				<%}%>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				<td colspan="<%=(columnSize+1).ToString()%>">
+					<?php echo $this->pagination->getListFooter(); ?>
+				</td>
+			</tr>
+		</tfoot>
+		<tbody>
+		<?php foreach ($this->items as $i => $item) :
+			$item->max_ordering = 0; //??
+			$ordering	= ($listOrder == 'a.ordering');
+			$canCreate = true;
+			$canEdit = true;
+			$canCheckin = true;
+			$canEditOwn = true;
+			$canChange = true;
+			//$canCreate	= $user->authorise('core.create',		'<%=ComponentName%>.category.'.$item->catid);
+			<%if(IsContainColumn(table,"id")){%>			
+			$canEdit	= $user->authorise('core.edit',			'<%=ComponentName%>.article.'.$item-><%=primaryColumnName%>);
+			<%}%>			
+			//$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
+			//$canEditOwn	= $user->authorise('core.edit.own',		'<%=ComponentName%>.article.'.$item->id) && $item->created_by == $userId;
+			//$canChange	= $user->authorise('core.edit.state',	'<%=ComponentName%>.article.'.$item->id) && $canCheckin;
+			?>
+			<tr class="row<?php echo $i % 2; ?>">
+				<td class="center">
+					<%if(!string.IsNullOrEmpty(primaryColumnName))
+					{%><?php echo JHtml::_('grid.id', $i, $item-><%=primaryColumnName%>); ?>
+					<%
+				}%></td>
+				<%
+				columnSize=0;
+				foreach(IColumn column in listColumns)
+				{				
+					string columnName = column.Name.ToLower();
+					if(fieldsDonotDisplay.Contains(columnName))
+					continue;
+					string tdclass="class='order'";
+					if(!columnName.Equals("ordering"))
+					{
+						tdclass = "";
+					}
+					else
+					{
+						tdclass="class='order'";
+					}
+					
+				%><td <%=tdclass%>><%
+					columnSize++;
+					switch(columnName)
+					{
+						case "title":
+				%>
+					<?php if ($canEdit || $canEditOwn) : ?>
+						<a href="<?php echo JRoute::_('index.php?option=<%=ComponentName%>&task=<%=GetEditView(model).ToLower()%>.edit&<%=primaryColumnName%>='.$item-><%=primaryColumnName%>);?>">
+							<?php echo $this->escape($item-><%=columnName%>); ?></a>
+					<?php else : ?>
+						<?php echo $this->escape($item-><%=columnName%>); ?>
+					<?php endif; ?>
+				<%
+							break;
+						case "name":
+				%>
+					<?php if ($canEdit || $canEditOwn) : ?>
+						<a href="<?php echo JRoute::_('index.php?option=<%=ComponentName%>&task=<%=GetEditView(model).ToLower()%>.edit&<%=primaryColumnName%>='.$item-><%=primaryColumnName%>);?>">
+							<?php echo $this->escape($item-><%=columnName%>); ?></a>
+					<?php else : ?>
+						<?php echo $this->escape($item-><%=columnName%>); ?>
+					<?php endif; ?>
+				<%
+							break;							
+						case "state":
+				%>
+					<?php if (isset($item->publish_up) && isset($item->publish_down)) : ?>
+					<?php echo JHtml::_('jgrid.published', $item->state, $i, '<%=model.ToLower()%>.', $canChange, 'cb', $item->publish_up, $item->publish_down); ?>
+					<?php else : ?>
+						<?php echo $this->escape($item->state); ?>
+					<?php endif; ?>				
+				<%
+							break;
+						case "ordering":
+				%>
+					<?php if ($canChange) : ?>
+						<?php if ($saveOrder) :?>
+							<?php if ($listDirn == 'asc') : ?>
+								<span><?php echo $this->pagination->orderUpIcon($i, ($item-><%=groupName%> == @$this->items[$i-1]-><%=groupName%>), '<%=model.ToLower()%>.orderup', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
+								<span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, ($item-><%=groupName%> == @$this->items[$i+1]-><%=groupName%>), '<%=model.ToLower()%>.orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
+							<?php elseif ($listDirn == 'desc') : ?>
+								<span><?php echo $this->pagination->orderUpIcon($i, ($item-><%=groupName%> == @$this->items[$i-1]-><%=groupName%>), '<%=model.ToLower()%>.orderdown', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
+								<span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, ($item-><%=groupName%> == @$this->items[$i+1]-><%=groupName%>), '<%=model.ToLower()%>.orderup', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
+							<?php endif; ?>
+						<?php endif; ?>
+						<?php $disabled = $saveOrder ?  '' : 'disabled="disabled"'; ?>
+						<input type="text" name="order[]" size="5" value="<?php echo $item->ordering;?>" <?php echo $disabled ?> class="text-area-order" />
+					<?php else : ?>
+						<?php echo $item->ordering; ?>
+					<?php endif; ?>				
+				<%
+							break;
+						case "catid":
+				%>
+					<?php echo $this->escape($item->category_title); ?>
+				<%
+							break;
+						case "created_by":
+					%><?php echo $this->escape($item->author_name); ?><%
+							break;
+						case "access":
+					%><?php echo $this->escape($item->access_level); ?><%
+							break;
+						case "language":
+					%><?php if ($item->language=='*'):?>
+						<?php echo JText::alt('JALL', 'language'); ?>
+					<?php else:?>
+						<?php echo $item->language_title ? $this->escape($item->language_title) : JText::_('JUNDEFINED'); ?>
+					<?php endif;?><%
+							break;							
+						default:
+							TableJoinItem item = GetTableJoinItemByColumn(column);
+							if(item != null && item.TitleAliasName != "")
+							{
+								columnName=item.TitleAliasName;
+							}
+				%>
+					<?php echo $this->escape($item-><%=columnName%>); ?>
+				<%
+							break;
+					}
+				%></td>				
+				<%}%>
+			</tr>
+			<?php endforeach; ?>
+		</tbody>
+	</table>
+
+	<?php //Load the batch processing form. ?>
+	<?php //echo $this->loadTemplate('batch'); ?>
+
+	<div>
+		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="boxchecked" value="0" />
+		<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+		<?php echo JHtml::_('form.token'); ?>
+	</div>
+</form>
+<%
+		output.save(path, "o");
+		output.clear();
+		
+	}
+%>
+##|BODY_END
