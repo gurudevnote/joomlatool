@@ -104,6 +104,11 @@ $assoc		= JLanguageAssociations::isEnabled();
 				<th width="1%" class="hidden-phone">
 					<?php echo JHtml::_('grid.checkall'); ?>
 				</th>
+				<%if(IsContainColumn(table,"id")){%>
+				<th width="1%" class="nowrap center hidden-phone">
+					<?php echo JHtml::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
+				</th>				
+				<%}%>
 				<%
 				IList<string> fieldsDonotDisplay = FieldsDonotDisplayAtModalListView;
 				int columnSize = 0;
@@ -128,12 +133,8 @@ $assoc		= JLanguageAssociations::isEnabled();
 				%><th>
 					<%switch(columnName)
 					{
-						case "ordering":						
-					%>
-				<th width="1%" class="nowrap center hidden-phone">
-					<?php echo JHtml::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
-				</th><%
-							break;
+						case "ordering":
+							continue;
 						case "created_by":
 					%><?php echo JHtml::_('grid.sort', 'JGRID_HEADING_CREATED_BY', 'a.created_by', $listDirn, $listOrder); ?><%
 							break;
@@ -144,7 +145,7 @@ $assoc		= JLanguageAssociations::isEnabled();
 					%><?php echo JHtml::_('grid.sort', 'JGRID_HEADING_LANGUAGE', 'language', $listDirn, $listOrder); ?><%
 							break;	
 						default:						
-					%><?php echo JHtml::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.<%=columnName%>', $listDirn, $listOrder); ?>
+					%><?php echo JHtml::_('searchtools.sort', '<%=ComponentName.ToUpper()%>_<%=model.ToUpper()%>_DEFAULT_TITLE', 'a.<%=columnName%>', $listDirn, $listOrder); ?>
 					<%
 							break;
 					}%>					
