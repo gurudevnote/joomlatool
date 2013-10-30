@@ -109,9 +109,14 @@ $assoc		= JLanguageAssociations::isEnabled();
 					<?php echo JHtml::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
 				</th>				
 				<%}%>
+				<?php if ($assoc) : ?>
+					<th width="5%" class="nowrap hidden-phone">
+						<?php echo JHtml::_('searchtools.sort', 'Association', 'association', $listDirn, $listOrder); ?>
+					</th>
+				<?php endif;?>
 				<%
 				IList<string> fieldsDonotDisplay = FieldsDonotDisplayAtModalListView;
-				int columnSize = 0;
+				int columnSize = 2;
 				string thwidth = "width='126px'";
 				IList<IColumn> listColumns = GetListColumnOrder(table);
 				foreach(IColumn column in listColumns)
@@ -134,18 +139,19 @@ $assoc		= JLanguageAssociations::isEnabled();
 					<%switch(columnName)
 					{
 						case "ordering":
+							columnSize--;
 							continue;
 						case "created_by":
-					%><?php echo JHtml::_('grid.sort', 'JGRID_HEADING_CREATED_BY', 'a.created_by', $listDirn, $listOrder); ?><%
+					%><?php echo JHtml::_('searchtools.sort',  'JAUTHOR', 'a.created_by', $listDirn, $listOrder); ?><%
 							break;
 						case "access":
-					%><?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?><%
+					%><?php echo JHtml::_('searchtools.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?><%
 							break;
 						case "language":
-					%><?php echo JHtml::_('grid.sort', 'JGRID_HEADING_LANGUAGE', 'language', $listDirn, $listOrder); ?><%
+					%><?php echo JHtml::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'language', $listDirn, $listOrder); ?><%
 							break;	
 						default:						
-					%><?php echo JHtml::_('searchtools.sort', '<%=ComponentName.ToUpper()%>_<%=model.ToUpper()%>_DEFAULT_TITLE', 'a.<%=columnName%>', $listDirn, $listOrder); ?>
+					%><?php echo JHtml::_('searchtools.sort', '<%=columnName%>', 'a.<%=columnName%>', $listDirn, $listOrder); ?>
 					<%
 							break;
 					}%>					
@@ -153,13 +159,6 @@ $assoc		= JLanguageAssociations::isEnabled();
 				<%}%>
 			</tr>
 		</thead>
-		<tfoot>
-			<tr>
-				<td colspan="<%=(columnSize+1).ToString()%>">
-					<?php echo $this->pagination->getListFooter(); ?>
-				</td>
-			</tr>
-		</tfoot>
 		<tbody>
 		<?php foreach ($this->items as $i => $item) :
 			$item->max_ordering = 0; //??
