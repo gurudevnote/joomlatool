@@ -72,6 +72,28 @@ public partial class GeneratedTemplate
             return returnList;
         }
     }
+	
+	public IList<string> FieldsDisplayAtListView
+    {
+        get 
+        {
+            IList<string> returnList = new List<string>();
+            returnList.Add("title");
+            returnList.Add("name");
+            //returnList.Add("alias");
+			returnList.Add("id");
+			returnList.Add("catid");
+			returnList.Add("language");
+			returnList.Add("created");
+			returnList.Add("access_level");
+			returnList.Add("ordering");
+			returnList.Add("state");
+			returnList.Add("access");
+			returnList.Add("created");
+			returnList.Add("hits");
+            return returnList;
+        }
+    }	
 
     public IList<string> FieldsDonotDisplayAtModalListView
     {
@@ -212,6 +234,45 @@ public partial class GeneratedTemplate
 
 		return returnList;
 	}
+	
+	public IList<string> GetFieldsDisplayAtListView(ITable table)
+	{
+		IList<string> returnList = new List<string>();
+		foreach (IColumn col in table.Columns)
+        {
+			string colName = col.Name.ToLower();
+			if (FieldsDisplayAtModalListView.Contains(colName))
+			{
+				returnList.Add(colName);				
+			}
+        }
+
+        if (returnList.Contains("alias"))
+        {
+            returnList.Remove("alias");
+            returnList.Insert(0, "alias");
+        }
+
+        if (returnList.Contains("name"))
+        {
+            returnList.Remove("name");
+            returnList.Insert(0, "name");
+        }
+
+        if (returnList.Contains("title"))
+        {
+            returnList.Remove("title");
+            returnList.Insert(0, "title");
+        }
+		
+        if (returnList.Contains("ordering"))
+        {
+            returnList.Remove("ordering");
+            returnList.Insert(0, "ordering");
+        }
+
+		return returnList;
+	}	
 	
 	public string GetTitleFieldName(ITable table)
 	{
@@ -773,15 +834,24 @@ public partial class GeneratedTemplate
         {
             return string.Empty;
         }
+		
+		string primryColName = "";
         foreach (IColumn column in table.Columns)
-        {
-            if (column.IsInPrimaryKey)
+        {            
+			if (column.IsInPrimaryKey)
             {
-                return column.Name;
+                if(column.Name.ToLower().Equals("id"))
+				{
+					return column.Name;
+				}
+				
+				if(String.IsNullOrEmpty(primryColName))
+				{
+					primryColName = column.Name;
+				}
             }
         }
-
-        return string.Empty;
+        return primryColName;
     }
 
     public string GetViewNameFromView(string viewName)
@@ -1149,7 +1219,8 @@ public partial class GeneratedTemplate
         CreateFolder(adminFolder + "/" + "tables");
         CreateAdminComponentFile(adminFolder + "/" + componentNameNoPrefix + ".php");
         CreateAdminControllerFile(adminFolder + "/controller.php");
-        CreateAdminHelperFile(adminFolder + "/helpers/" + componentNameNoPrefix + ".php");		
+        CreateAdminHelperFile(adminFolder + "/helpers/" + componentNameNoPrefix + ".php");
+		CreateHelperAdministrator(adminFolder + "/helpers/" + componentNameNoPrefix + "administrator.php");
 
         //Create view
         foreach (string view in Views)
