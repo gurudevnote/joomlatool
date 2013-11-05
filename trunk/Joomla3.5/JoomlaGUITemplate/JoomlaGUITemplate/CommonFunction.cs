@@ -141,7 +141,8 @@ public partial class GeneratedTemplate
 
     public IList<IColumn> GetListColumnOrder(ITable table)
     {
-        IList<IColumn> list = new List<IColumn>();
+        //Status	 Title		 Access	 Association	 Author	 Language	 Date	 Hits	 ID
+		IList<IColumn> list = new List<IColumn>();
         if(table == null)
         {
             return list;
@@ -241,11 +242,47 @@ public partial class GeneratedTemplate
 		foreach (IColumn col in table.Columns)
         {
 			string colName = col.Name.ToLower();
-			if (FieldsDisplayAtModalListView.Contains(colName))
+			if (FieldsDisplayAtListView.Contains(colName))
 			{
 				returnList.Add(colName);				
 			}
         }
+		
+		if (returnList.Contains("id"))
+        {
+            returnList.Remove("id");
+            returnList.Insert(0, "id");
+        }		
+
+		if (returnList.Contains("hits"))
+        {
+            returnList.Remove("hits");
+            returnList.Insert(0, "hits");
+        }
+		
+		if (returnList.Contains("created"))
+        {
+            returnList.Remove("created");
+            returnList.Insert(0, "created");
+        }
+
+		if (returnList.Contains("created_by"))
+        {
+            returnList.Remove("created_by");
+            returnList.Insert(0, "created_by");
+        }
+
+		if (returnList.Contains("language"))
+        {
+            returnList.Remove("language");
+            returnList.Insert(0, "language");
+        }				
+		
+        if (returnList.Contains("access"))
+        {
+            returnList.Remove("access");
+            returnList.Insert(0, "access");
+        }		
 
         if (returnList.Contains("alias"))
         {
@@ -257,13 +294,19 @@ public partial class GeneratedTemplate
         {
             returnList.Remove("name");
             returnList.Insert(0, "name");
-        }
-
+        }		
+		
         if (returnList.Contains("title"))
         {
             returnList.Remove("title");
             returnList.Insert(0, "title");
-        }
+        }		
+		
+        if (returnList.Contains("state"))
+        {
+            returnList.Remove("state");
+            returnList.Insert(0, "state");
+        }		
 		
         if (returnList.Contains("ordering"))
         {
@@ -1220,7 +1263,7 @@ public partial class GeneratedTemplate
         CreateAdminComponentFile(adminFolder + "/" + componentNameNoPrefix + ".php");
         CreateAdminControllerFile(adminFolder + "/controller.php");
         CreateAdminHelperFile(adminFolder + "/helpers/" + componentNameNoPrefix + ".php");
-		CreateHelperAdministrator(adminFolder + "/helpers/" + componentNameNoPrefix + "administrator.php");
+		CreateHelperAdministrator(adminFolder + "/helpers/html/" + componentNameNoPrefix + "administrator.php");
 
         //Create view
         foreach (string view in Views)
