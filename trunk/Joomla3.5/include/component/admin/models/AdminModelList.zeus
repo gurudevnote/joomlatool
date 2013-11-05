@@ -237,6 +237,9 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 			->join('LEFT', '#__users AS ua ON ua.id = a.created_by');
 		<%
 		}
+
+		if(IsContainColumn(table,"language"))
+		{
 		%>
 		// Join over the associations.
 		if (JLanguageAssociations::isEnabled())
@@ -247,6 +250,8 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 				->group('a.id');
 		}
 		<%
+		}
+		
 		if(IsContainColumn(table,"access"))
 		{
 		%>
