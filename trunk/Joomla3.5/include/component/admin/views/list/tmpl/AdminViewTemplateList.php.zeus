@@ -216,7 +216,7 @@ $assoc		= JLanguageAssociations::isEnabled();
 					<div class="btn-group">
 						<?php echo JHtml::_('jgrid.published', $item->state, $i, '<%=model.ToLower()%>.', $canChange, 'cb', $item->publish_up, $item->publish_down); ?>
 						<%if(IsContainColumn(table,"featured")){%>
-						<?php echo JHtml::_('<%=GetEditView(model).ToLower()%>administrator.featured', $item->featured, $i, $canChange); ?>
+						<?php echo JHtml::_('<%=ComponentClassName.ToLower()%>administrator.<%=GetEditView(model).ToLower()%>featured', $item->featured, $i, $canChange); ?>
 						<%}%>
 						<?php
 						// Create dropdown items
