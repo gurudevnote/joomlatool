@@ -60,13 +60,15 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 
 %><%#FILECOMPILE include/component/admin/models/forms/filter_list.xml.zeus%><%
 
+%><%#FILECOMPILE include/AdminHelper.zeus%><%
+%><%#FILECOMPILE include/component/admin/helpers/html/HelperAdministrator.php.zeus%><%
+
 %><%#FILECOMPILE include/AdminViewTemplateEditMeta.zeus%><%
 %><%#FILECOMPILE include/AdminViewTemplateEdit.zeus%><%
 %><%#FILECOMPILE include/AdminViewTemplateListModal.zeus%><%
 %><%#FILECOMPILE include/AdminModelFieldsEdit.zeus%><%
 
 %><%#FILECOMPILE include/AdminModelFieldsModal.zeus%><%
-%><%#FILECOMPILE include/AdminHelper.zeus%><%
 %><%#FILECOMPILE include/AdminControllerList.zeus%><%
 %><%#FILECOMPILE include/AdminTable.zeus%><%
 %><%#FILECOMPILE include/AdminControllerEdit.zeus%><%
