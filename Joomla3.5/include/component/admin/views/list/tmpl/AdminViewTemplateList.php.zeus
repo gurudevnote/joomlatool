@@ -28,6 +28,8 @@
 		{
 			groupName = "catid";
 		}
+		
+		string titleFileName = GetTitleFieldName(table).ToLower();
 		output.clear();
 %><?php
 /**
@@ -117,6 +119,16 @@ $assoc		= JLanguageAssociations::isEnabled();
 					<?php echo JHtml::_('searchtools.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
 				</th>
 				<%}%>
+				<%if(!String.IsNullOrEmpty(titleFileName)){%>
+				<th>
+					<?php echo JHtml::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.<%=titleFileName%>', $listDirn, $listOrder); ?>
+				</th>
+				<%}%>
+				<%if(IsContainColumn(table,"access")){%>
+				<th width="10%" class="nowrap hidden-phone">
+					<?php echo JHtml::_('searchtools.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
+				</th>
+				<%}%>
 			<?php if ($assoc) : ?>
 				<th width="5%" class="nowrap hidden-phone">
 					<?php echo JHtml::_('searchtools.sort', 'Association', 'association', $listDirn, $listOrder); ?>
@@ -133,9 +145,16 @@ $assoc		= JLanguageAssociations::isEnabled();
 						continue;
 					columnSize++;
 					bool isShowTHTag = true;
-					if(columnName.Equals("ordering"))
+					if(columnName.Equals("ordering")
+						|| columnName.Equals(primaryColumnName.ToLower())
+						|| columnName.Equals(titleFileName.ToLower())
+						|| columnName.Equals("state")
+						|| columnName.Equals("access")
+						|| columnName.Equals("featured")
+						)
 					{
 						isShowTHTag = false;
+						continue;
 					}
 					if(isShowTHTag)
 					{
@@ -145,13 +164,13 @@ $assoc		= JLanguageAssociations::isEnabled();
 					<%switch(columnName)
 					{
 						case "ordering":
+						case "state":
+						case "featured":
+						case "access":
 							columnSize--;
 							continue;
 						case "created_by":
 					%><?php echo JHtml::_('searchtools.sort',  'JAUTHOR', 'a.created_by', $listDirn, $listOrder); ?><%
-							break;
-						case "access":
-					%><?php echo JHtml::_('searchtools.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?><%
 							break;
 						case "language":
 					%><?php echo JHtml::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'language', $listDirn, $listOrder); ?><%
@@ -242,14 +261,53 @@ $assoc		= JLanguageAssociations::isEnabled();
 						?>
 					</div>
 				</td>
-				<%}%>				
+				<%}%>
+				<%if(!String.IsNullOrEmpty(titleFileName)){%>
+				<td class="has-context">
+					<div class="pull-left">
+						<?php if ($item->checked_out) : ?>
+							<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'articles.', $canCheckin); ?>
+						<?php endif; ?>
+						<%if(IsContainColumn(table,"language")){%>
+						<?php if ($item->language == '*'):?>
+							<?php $language = JText::alt('JALL', 'language'); ?>
+						<?php else:?>
+							<?php $language = $item->language_title ? $this->escape($item->language_title) : JText::_('JUNDEFINED'); ?>
+						<?php endif;?>
+						<%}%>
+						<?php if ($canEdit || $canEditOwn) : ?>
+							<a href="<?php echo JRoute::_('index.php?option=<%=ComponentName%>&task=<%=GetEditView(model).ToLower()%>.edit&id=' . $item-><%=primaryColumnName%>); ?>" title="<?php echo JText::_('JACTION_EDIT'); ?>">
+								<?php echo $this->escape($item-><%=titleFileName%>); ?></a>
+						<?php else : ?>
+						<%if(IsContainColumn(table,"alias")){%>
+							<span title="<?php echo JText::sprintf('JFIELD_ALIAS_LABEL', $this->escape($item->alias)); ?>"><?php echo $this->escape($item-><%=titleFileName%>); ?></span>
+						<%}%>
+						<?php endif; ?>
+						<%if(IsContainColumn(table,"catid")){%>
+						<div class="small">
+							<?php echo JText::_('JCATEGORY') . ": " . $this->escape($item->category_title); ?>
+						</div>
+						<%}%>
+					</div>
+				</td>				
+				<%}%>
 				<%
 				columnSize=0;
 				foreach(IColumn column in listColumns)
 				{				
 					string columnName = column.Name.ToLower();
 					if(!fieldsDisplay.Contains(columnName))
-					continue;
+						continue;
+					if(columnName.Equals("ordering")
+						|| columnName.Equals(primaryColumnName.ToLower())
+						|| columnName.Equals(titleFileName.ToLower())
+						|| columnName.Equals("state")
+						|| columnName.Equals("access")
+						|| columnName.Equals("featured")
+						)
+					{					
+						continue;
+					}						
 					string tdclass="class='order'";
 					if(!columnName.Equals("ordering"))
 					{
@@ -264,26 +322,6 @@ $assoc		= JLanguageAssociations::isEnabled();
 					columnSize++;
 					switch(columnName)
 					{
-						case "title":
-				%>
-					<?php if ($canEdit || $canEditOwn) : ?>
-						<a href="<?php echo JRoute::_('index.php?option=<%=ComponentName%>&task=<%=GetEditView(model).ToLower()%>.edit&<%=primaryColumnName%>='.$item-><%=primaryColumnName%>);?>">
-							<?php echo $this->escape($item-><%=columnName%>); ?></a>
-					<?php else : ?>
-						<?php echo $this->escape($item-><%=columnName%>); ?>
-					<?php endif; ?>
-				<%
-							break;
-						case "name":
-				%>
-					<?php if ($canEdit || $canEditOwn) : ?>
-						<a href="<?php echo JRoute::_('index.php?option=<%=ComponentName%>&task=<%=GetEditView(model).ToLower()%>.edit&<%=primaryColumnName%>='.$item-><%=primaryColumnName%>);?>">
-							<?php echo $this->escape($item-><%=columnName%>); ?></a>
-					<?php else : ?>
-						<?php echo $this->escape($item-><%=columnName%>); ?>
-					<?php endif; ?>
-				<%
-							break;							
 						case "state":
 				%>
 					<?php if (isset($item->publish_up) && isset($item->publish_down)) : ?>
