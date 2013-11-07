@@ -43,7 +43,8 @@ abstract class JHtml<%=ComponentClassName%>Administrator
 		foreach(string model in ListViews)
 		{
 			ITable table = GetTableFromView(model);
-			if(IsContainColumn(table,"language"))
+			string primaryColumnName = GetPrimaryColumnName(table);
+			if(IsContainColumn(table,"language") && !string.IsNullOrEmpty(primaryColumnName))
 			{
 	%>
 	/**
@@ -59,7 +60,7 @@ abstract class JHtml<%=ComponentClassName%>Administrator
 		$html = '';
 
 		// Get the associations
-		if ($associations = JLanguageAssociations::getAssociations('<%=ComponentName%>', '#__<%=GetTableName(table).ToLower()%>', '<=ComponentName>.item', $<%=GetEditView(model).ToLower()%>id))
+		if ($associations = JLanguageAssociations::getAssociations('<%=ComponentName%>', '#__<%=GetTableName(table).ToLower()%>', '<%=ComponentName%>.item', $<%=GetEditView(model).ToLower()%>id))
 		{
 			foreach ($associations as $tag => $associated)
 			{
@@ -123,7 +124,8 @@ abstract class JHtml<%=ComponentClassName%>Administrator
 
 		return $html;
 	}
-	<%}
+	<%
+	}
 	
 	if(IsContainColumn(table,"featured"))
 	{
@@ -163,10 +165,12 @@ abstract class JHtml<%=ComponentClassName%>Administrator
 
 		return $html;
 	}
-}
 <%
 		}
 		}
+%>
+}
+<%
 		output.save(path, "o");
 		output.clear();		
 	}

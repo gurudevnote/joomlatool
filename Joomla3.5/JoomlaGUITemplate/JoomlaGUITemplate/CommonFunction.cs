@@ -242,7 +242,10 @@ public partial class GeneratedTemplate
 		foreach (IColumn col in table.Columns)
         {
 			string colName = col.Name.ToLower();
-			if (FieldsDisplayAtListView.Contains(colName))
+			if (FieldsDisplayAtListView.Contains(colName) 
+				|| colName.Contains("title")
+				|| colName.Contains("name")
+				)
 			{
 				returnList.Add(colName);				
 			}

@@ -129,11 +129,13 @@ $assoc		= JLanguageAssociations::isEnabled();
 					<?php echo JHtml::_('searchtools.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
 				</th>
 				<%}%>
+				<%if(IsContainColumn(table,"language")){%>
 			<?php if ($assoc) : ?>
 				<th width="5%" class="nowrap hidden-phone">
 					<?php echo JHtml::_('searchtools.sort', 'Association', 'association', $listDirn, $listOrder); ?>
 				</th>
 			<?php endif;?>
+				<%}%>
 				<%
 				IList<string> fieldsDisplay = GetFieldsDisplayAtListView(table);
 				int columnSize = 2;
@@ -146,7 +148,7 @@ $assoc		= JLanguageAssociations::isEnabled();
 					columnSize++;
 					bool isShowTHTag = true;
 					if(columnName.Equals("ordering")
-						|| columnName.Equals(primaryColumnName.ToLower())
+						//|| columnName.Equals(primaryColumnName.ToLower())
 						|| columnName.Equals(titleFileName.ToLower())
 						|| columnName.Equals("state")
 						|| columnName.Equals("access")
@@ -265,9 +267,11 @@ $assoc		= JLanguageAssociations::isEnabled();
 				<%if(!String.IsNullOrEmpty(titleFileName)){%>
 				<td class="has-context">
 					<div class="pull-left">
+						<%if(IsContainColumn(table,"checked_out")){%>
 						<?php if ($item->checked_out) : ?>
 							<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'articles.', $canCheckin); ?>
 						<?php endif; ?>
+						<%}%>
 						<%if(IsContainColumn(table,"language")){%>
 						<?php if ($item->language == '*'):?>
 							<?php $language = JText::alt('JALL', 'language'); ?>
@@ -291,6 +295,20 @@ $assoc		= JLanguageAssociations::isEnabled();
 					</div>
 				</td>				
 				<%}%>
+				<%if(IsContainColumn(table,"access")){%>
+				<td class="small hidden-phone">
+					<?php echo $this->escape($item->access_level); ?>
+				</td>
+				<%}%>
+				<%if(IsContainColumn(table,"language")){%>
+				<?php if ($assoc) : ?>
+				<td class="hidden-phone">
+					<?php if ($item->association) : ?>
+						<?php echo JHtml::_('contentadministrator.association', $item->id); ?>
+					<?php endif; ?>
+				</td>
+				<?php endif;?>
+				<%}%>
 				<%
 				columnSize=0;
 				foreach(IColumn column in listColumns)
@@ -299,7 +317,7 @@ $assoc		= JLanguageAssociations::isEnabled();
 					if(!fieldsDisplay.Contains(columnName))
 						continue;
 					if(columnName.Equals("ordering")
-						|| columnName.Equals(primaryColumnName.ToLower())
+						//|| columnName.Equals(primaryColumnName.ToLower())
 						|| columnName.Equals(titleFileName.ToLower())
 						|| columnName.Equals("state")
 						|| columnName.Equals("access")
@@ -308,66 +326,48 @@ $assoc		= JLanguageAssociations::isEnabled();
 					{					
 						continue;
 					}						
-					string tdclass="class='order'";
-					if(!columnName.Equals("ordering"))
-					{
-						tdclass = "";
-					}
-					else
-					{
-						tdclass="class='order'";
-					}
-					
-				%><td <%=tdclass%>><%
 					columnSize++;
 					switch(columnName)
 					{
-						case "state":
-				%>
-					<?php if (isset($item->publish_up) && isset($item->publish_down)) : ?>
-					<?php echo JHtml::_('jgrid.published', $item->state, $i, '<%=model.ToLower()%>.', $canChange, 'cb', $item->publish_up, $item->publish_down); ?>
-					<?php else : ?>
-						<?php echo $this->escape($item->state); ?>
-					<?php endif; ?>				
-				<%
-							break;
-						case "ordering":
-				%>
-					<?php if ($canChange) : ?>
-						<?php if ($saveOrder) :?>
-							<?php if ($listDirn == 'asc') : ?>
-								<span><?php echo $this->pagination->orderUpIcon($i, ($item-><%=groupName%> == @$this->items[$i-1]-><%=groupName%>), '<%=model.ToLower()%>.orderup', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
-								<span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, ($item-><%=groupName%> == @$this->items[$i+1]-><%=groupName%>), '<%=model.ToLower()%>.orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
-							<?php elseif ($listDirn == 'desc') : ?>
-								<span><?php echo $this->pagination->orderUpIcon($i, ($item-><%=groupName%> == @$this->items[$i-1]-><%=groupName%>), '<%=model.ToLower()%>.orderdown', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
-								<span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, ($item-><%=groupName%> == @$this->items[$i+1]-><%=groupName%>), '<%=model.ToLower()%>.orderup', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
-							<?php endif; ?>
-						<?php endif; ?>
-						<?php $disabled = $saveOrder ?  '' : 'disabled="disabled"'; ?>
-						<input type="text" name="order[]" size="5" value="<?php echo $item->ordering;?>" <?php echo $disabled ?> class="text-area-order" />
-					<?php else : ?>
-						<?php echo $item->ordering; ?>
-					<?php endif; ?>				
-				<%
-							break;
 						case "catid":
 				%>
-					<?php echo $this->escape($item->category_title); ?>
+					<td class="center hidden-phone">
+						<?php echo $this->escape($item->category_title); ?>
+					</td>
 				<%
 							break;
 						case "created_by":
-					%><?php echo $this->escape($item->author_name); ?><%
-							break;
-						case "access":
-					%><?php echo $this->escape($item->access_level); ?><%
+					%>
+					<td class="small hidden-phone">
+						<?php if ($item->created_by_alias) : ?>
+							<a href="<?php echo JRoute::_('index.php?option=com_users&task=user.edit&id='.(int) $item->created_by); ?>" title="<?php echo JText::_('JAUTHOR'); ?>">
+							<?php echo $this->escape($item->author_name); ?></a>
+							<p class="smallsub"> <?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->created_by_alias)); ?></p>
+						<?php else : ?>
+							<a href="<?php echo JRoute::_('index.php?option=com_users&task=user.edit&id='.(int) $item->created_by); ?>" title="<?php echo JText::_('JAUTHOR'); ?>">
+							<?php echo $this->escape($item->author_name); ?></a>
+						<?php endif; ?>
+					</td>
+					<%
 							break;
 						case "language":
-					%><?php if ($item->language=='*'):?>
-						<?php echo JText::alt('JALL', 'language'); ?>
-					<?php else:?>
-						<?php echo $item->language_title ? $this->escape($item->language_title) : JText::_('JUNDEFINED'); ?>
-					<?php endif;?><%
-							break;							
+					%>
+					<td class="small hidden-phone">
+						<?php if ($item->language == '*'):?>
+							<?php echo JText::alt('JALL', 'language'); ?>
+						<?php else:?>
+							<?php echo $item->language_title ? $this->escape($item->language_title) : JText::_('JUNDEFINED'); ?>
+						<?php endif;?>
+					</td>
+					<%
+							break;
+						case "created":
+					%>
+					<td class="nowrap small hidden-phone">
+						<?php echo JHtml::_('date', $item->created, JText::_('DATE_FORMAT_LC4')); ?>
+					</td>
+					<%							
+							break;
 						default:
 							TableJoinItem item = GetTableJoinItemByColumn(column);
 							if(item != null && item.TitleAliasName != "")
@@ -375,25 +375,25 @@ $assoc		= JLanguageAssociations::isEnabled();
 								columnName=item.TitleAliasName;
 							}
 				%>
-					<?php echo $this->escape($item-><%=columnName%>); ?>
+					<td class="center hidden-phone">
+							<?php echo $this->escape($item-><%=columnName%>); ?>
+					</td>
 				<%
 							break;
 					}
-				%></td>				
-				<%}%>
+				}%>
 			</tr>
 			<?php endforeach; ?>
 		</tbody>
 	</table>
 	<?php endif; ?>
+	<?php echo $this->pagination->getListFooter(); ?>
 	<?php //Load the batch processing form. ?>
 	<?php //echo $this->loadTemplate('batch'); ?>
 
 	<div>
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 		<?php echo JHtml::_('form.token'); ?>
 	</div>
 </form>
