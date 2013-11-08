@@ -121,7 +121,7 @@ $assoc		= JLanguageAssociations::isEnabled();
 				<%}%>
 				<%if(!String.IsNullOrEmpty(titleFileName)){%>
 				<th>
-					<?php echo JHtml::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.<%=titleFileName%>', $listDirn, $listOrder); ?>
+					<?php echo JHtml::_('searchtools.sort', '<%=titleFileName%>', 'a.<%=titleFileName%>', $listDirn, $listOrder); ?>
 				</th>
 				<%}%>
 				<%if(IsContainColumn(table,"access")){%>
@@ -331,7 +331,7 @@ $assoc		= JLanguageAssociations::isEnabled();
 					{
 						case "catid":
 				%>
-					<td class="center hidden-phone">
+					<td class="small hidden-phone">
 						<?php echo $this->escape($item->category_title); ?>
 					</td>
 				<%
@@ -369,13 +369,27 @@ $assoc		= JLanguageAssociations::isEnabled();
 					<%							
 							break;
 						default:
+							string className = "center hidden-phone";							
 							TableJoinItem item = GetTableJoinItemByColumn(column);
 							if(item != null && item.TitleAliasName != "")
 							{
 								columnName=item.TitleAliasName;
+								className = "small hidden-phone";
+							}							
+							if(ColumnDataTypeIsDateTime(column))
+							{
+								className = "nowrap small hidden-phone";
 							}
+							else if(ColumnDataTypeIsText(column)
+								|| ColumnDataTypeIsVarchar(column)
+								|| ColumnDataTypeIsMediumText(column)
+							)
+							{
+								className = "small hidden-phone";
+							}
+							
 				%>
-					<td class="center hidden-phone">
+					<td class="<%=className%>">
 							<?php echo $this->escape($item-><%=columnName%>); ?>
 					</td>
 				<%
