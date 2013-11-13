@@ -52,6 +52,7 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 
 %><%#FILECOMPILE include/component/admin/views/list/list.php.zeus%><%
 %><%#FILECOMPILE include/component/admin/views/list/tmpl/AdminViewTemplateList.php.zeus%><%
+%><%#FILECOMPILE include/component/admin/views/list/tmpl/AdminViewTemplateBatch.php.zeus%><%
 
 %><%#FILECOMPILE include/component/admin/views/edit/edit.php.zeus%><%
 
