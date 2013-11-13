@@ -1285,6 +1285,7 @@ public partial class GeneratedTemplate
             CreateAdminModelList(adminFolder + "\\" + "models\\" + viewLower + ".php", view);
             CreateAdminViewList(adminFolder + "\\" + "views\\" + viewLower + "\\view.html.php", view);
             CreateAdminViewTemplateList(adminFolder + "\\" + "views\\" + viewLower + "\\tmpl\\default.php", view);
+			CreateAdminViewTemplateBatch(adminFolder + "\\" + "views\\" + viewLower + "\\tmpl\\default_batch.php", view);
 			CreateAdminViewTemplateListModal(adminFolder + "\\" + "views\\" + viewLower + "\\tmpl\\modal.php", view);
             CreateAdminControllerList(adminFolder + "\\" + "controllers\\" + viewLower + ".php", view);
 

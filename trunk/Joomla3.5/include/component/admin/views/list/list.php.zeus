@@ -193,8 +193,12 @@ if(IsContainColumn(table,"catid"))
 	protected function getSortFields()
 	{
 		return array(
+		<%if(IsContainColumn(table,"ordering")){%>
 			'a.ordering'     => JText::_('JGRID_HEADING_ORDERING'),
+		<%}%>
+		<%if(IsContainColumn(table,"state")){%>
 			'a.state'        => JText::_('JSTATUS'),
+		<%}%>
 			'a.title'        => JText::_('JGLOBAL_TITLE'),
 			'category_title' => JText::_('JCATEGORY'),
 			'access_level'   => JText::_('JGRID_HEADING_ACCESS'),
