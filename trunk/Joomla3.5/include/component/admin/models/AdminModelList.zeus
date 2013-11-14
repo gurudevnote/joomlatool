@@ -16,6 +16,7 @@
 	public void CreateAdminModelList(string path, string model)
 	{		
 		ITable table = GetTableFromView(model);
+		string primaryKey = GetPrimaryColumnName(table).ToLower();
 		output.clear();
 %><?php
 /**
@@ -53,6 +54,11 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 					string columnName = column.Name.ToLower();
 				%>'<%=columnName%>', 'a.<%=columnName%>',
 				<%}%>
+				'author_id',
+				'category_id',
+				'level',
+				'tag',
+				'access_level'
 			);
 			
 			if (JLanguageAssociations::isEnabled())
@@ -338,10 +344,11 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 		// Filter by search in title.
 		$search = $this->getState('filter.search');
 		if (!empty($search)) {
+			<%if(!string.IsNullOrEmpty(primaryKey)){%>
 			if (stripos($search, 'id:') === 0) {
-				$query->where('a.id = '.(int) substr($search, 3));
+				$query->where('a.<%=primaryKey%> = '.(int) substr($search, 3));
 			}
-			elseif (stripos($search, 'author:') === 0) {
+			else <%}%>if (stripos($search, 'author:') === 0) {
 				$search = $db->Quote('%'.$db->getEscaped(substr($search, 7), true).'%');
 				$query->where('(ua.name LIKE '.$search.' OR ua.username LIKE '.$search.')');
 			}
@@ -371,6 +378,10 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 		}
 		%>
 		
+		<%if(!string.IsNullOrEmpty(primaryKey)
+			&& IsContainVarcharColumn(table)
+			)
+		{%>
 		// Filter by a single tag.
 		$tagId = $this->getState('filter.tag');
 
@@ -379,10 +390,11 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 			$query->where($db->quoteName('tagmap.tag_id') . ' = ' . (int) $tagId)
 				->join(
 					'LEFT', $db->quoteName('#__contentitem_tag_map', 'tagmap')
-					. ' ON ' . $db->quoteName('tagmap.content_item_id') . ' = ' . $db->quoteName('a.id')
+					. ' ON ' . $db->quoteName('tagmap.content_item_id') . ' = ' . $db->quoteName('a.<%=primaryKey%>')
 					. ' AND ' . $db->quoteName('tagmap.type_alias') . ' = ' . $db->quote('<%=ComponentName%>.<%=GetEditView(model).ToLower()%>')
 				);
 		}
+		<%}%>
 		
 		// Add the list ordering clause.
 		$orderCol	= $this->state->get('list.ordering','a.<%=GetFirstColumn(table).Name%>');

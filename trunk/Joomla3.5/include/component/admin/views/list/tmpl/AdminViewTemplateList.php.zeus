@@ -101,7 +101,7 @@ $assoc		= JLanguageAssociations::isEnabled();
 				<?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
 			</div>
 		<?php else : ?>
-	<table class="table table-striped" id="<%=GetEditView(model)%>List">
+	<table class="table table-striped" id="<%=GetEditView(model).ToLower()%>List">
 		<thead>
 			<tr>
 				<%if(IsContainColumn(table,"ordering")){%>

@@ -55,12 +55,7 @@
 			onchange="this.form.submit();"
 			>
 			<option value="">JOPTION_SELECT_CATEGORY</option>
-		</field>
-		<%
-		}
-		if(IsContainColumn(table,"level"))
-		{
-		%>
+		</field>		
 		<field
 			name="level"
 			type="integer"
@@ -76,7 +71,7 @@
 		</field>
 		<%
 		}
-		if(IsContainColumn(table,"level"))
+		if(IsContainColumn(table,"access"))
 		{
 		%>		
 		<field
@@ -118,7 +113,9 @@
 		</field>
 		<%
 		}
-		if(IsContainColumn(table,"tag"))
+		if(!string.IsNullOrEmpty(GetPrimaryColumnName(table))
+			&& IsContainVarcharColumn(table)
+			)
 		{
 		%>		
 		<field
