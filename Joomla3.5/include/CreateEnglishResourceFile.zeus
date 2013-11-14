@@ -18,6 +18,8 @@
 		output.clear();
 		string componentNameUpper = ComponentName.ToUpper();
 %><%=componentNameUpper%>_FIELDSET_PUBLISHING="Publishing Options"
+<%=componentNameUpper%>_BATCH_OPTIONS="Batch process the selected items"
+<%=componentNameUpper%>_BATCH_TIP = "If choosing to copy an item, any other actions selected will be applied to the copied item. Otherwise, all actions are applied to the selected items."
 <%=componentNameUpper%>_CONFIGURATION="<%=UpperFirstChar(ComponentNameNoPrefix)%> Manager Options"
 <%=componentNameUpper%>_SUBMENU_CATEGORIES="Categories"
 <%=componentNameUpper%>_NO_ITEM_SELECTED="No items selected"

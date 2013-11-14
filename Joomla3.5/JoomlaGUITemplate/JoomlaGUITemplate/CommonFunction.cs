@@ -997,6 +997,19 @@ public partial class GeneratedTemplate
         string dataType = GetColumnDataType(col);
         return (dataType.Equals("INT") || dataType.Equals("INT UNSIGNED"));
     }
+	
+	public bool IsContainVarcharColumn(ITable table)
+    {
+        foreach (IColumn col in table.Columns)
+        { 
+            if(ColumnDataTypeIsVarchar(col))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }	
 
     public bool IsContainPublishOptionField(ITable table)
     {

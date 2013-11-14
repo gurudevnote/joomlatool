@@ -112,7 +112,7 @@ class <%=ComponentClassName%>View<%=view%> extends JViewLegacy
 if(IsContainColumn(table,"catid"))
 {
 %>	
-		$canDo	= <%=ComponentClassName%>Helper::getActions($this->state->get('filter.category_id'), 0, '<%=ComponentName%>');
+		$canDo	= JHelperContent::getActions($this->state->get('filter.category_id'), 0, '<%=ComponentName%>');
 <%
 }else
 {
