@@ -139,7 +139,7 @@ class <%=ComponentClassName%>Controller<%=view%> extends JControllerForm
 	 * @return	void
 	 * @since	1.6
 	 */
-	public function batch($model)
+	public function batch($model = null)
 	{
 		JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
