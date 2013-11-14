@@ -19,6 +19,7 @@
 		string componentNameUpper = ComponentName.ToUpper();
 %><%=componentNameUpper%>_FIELDSET_PUBLISHING="Publishing Options"
 <%=componentNameUpper%>_CONFIGURATION="<%=UpperFirstChar(ComponentNameNoPrefix)%> Manager Options"
+<%=componentNameUpper%>_SUBMENU_CATEGORIES="Categories"
 <%=componentNameUpper%>_NO_ITEM_SELECTED="No items selected"
 <%=componentNameUpper%>_PAGEBREAK_DOC_TITLE="Page Break"
 <%=componentNameUpper%>_WARNING_PROVIDE_VALID_TITLE="Please provide a valid, non-blank title."

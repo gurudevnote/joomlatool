@@ -1,0 +1,161 @@
+﻿##|TYPE Function
+##|UNIQUEID b0de4d2c-0494-45e9-8d35-ea35e1b1db73
+##|TITLE AdminHelperFile
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateAdminHelperFile(string path)
+	{		
+		output.clear();
+%><?php
+/**
+ * @version		$Id: content.php 22359 2011-11-07 16:31:03Z github_bot $
+ * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+// No direct access
+defined('_JEXEC') or die;
+
+/**
+ * Content component helper.
+ *
+ * @package		Joomla.Administrator
+ * @subpackage	<%=ComponentName%>
+ * @since		1.6
+ */
+class <%=ComponentClassName%>Helper extends JHelperContent
+{
+	public static $extension = '<%=ComponentName%>';
+
+	/**
+	 * Configure the Linkbar.
+	 *
+	 * @param	string	$vName	The name of the active view.
+	 *
+	 * @return	void
+	 * @since	1.6
+	 */
+	public static function addSubmenu($vName)
+	{
+		$user	= JFactory::getUser();
+		<%
+		bool catmanagement = false;
+		foreach(string listView in ListViews)
+		{
+			ITable table = GetTableFromView(listView);			
+			if(IsContainColumn(table,"catid") && !catmanagement)
+			{
+				catmanagement = true;
+			%>
+		JHtmlSidebar::addEntry(
+			JText::_('<%=ComponentName.ToUpper()%>_SUBMENU_CATEGORIES'),
+			'index.php?option=com_categories&extension=<%=ComponentName%>',
+			$vName == 'categories'
+		);
+			<%
+			}%>			
+		if($user->authorise('core.manage', '<%=ComponentName.ToLower()%>.assetview.<%=listView.ToLower()%>'))
+		{
+			JHtmlSidebar::addEntry(
+				JText::_('<%=GetViewNameFromView(listView)%>'),
+				'index.php?option=<%=ComponentName%>&view=<%=listView.ToLower()%>',
+				$vName == '<%=listView.ToLower()%>'
+			);
+		}
+		<%}%>
+	}
+	
+	/**
+	 * Gets a list of the actions that can be performed.
+	 *
+	 * @param	int		The category ID.
+	 * @param	int		The article ID.
+	 *
+	 * @return	JObject
+	 * @since	1.6
+	 */
+	public static function getActions($categoryId = 0, $articleId = 0, $view = "")
+	{
+		$user	= JFactory::getUser();
+		$result	= new JObject;
+
+		if (empty($articleId) && empty($categoryId) && empty($view)) {
+			$assetName = '<%=ComponentName%>';
+		}
+		elseif (empty($articleId)) {
+			$assetName = '<%=ComponentName%>.category.'.(int) $categoryId;
+		}
+		else {
+			$assetName = "<%=ComponentName%>.$view.".(int) $articleId;
+		}
+
+		$actions = array(
+			'core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete'
+		);
+
+		foreach ($actions as $action) {
+			$result->set($action,	$user->authorise($action, $assetName));
+		}
+
+		return $result;
+	}
+	
+	public static function getActionsBySection($section="", $id = 0)
+	{
+		$user	= JFactory::getUser();
+		$result	= new JObject;
+
+		if (empty($section) || $section==null || $section == "") {
+			$assetName = 'com_test';
+		}
+		elseif (empty($id) || $id == null || $id == "" || $id==0) {
+			$assetName = "com_test.section.$section";
+		}
+		else {
+			$assetName = "com_test.$section.".(int) $id;
+		}
+
+		$actions = array(
+			'core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete'
+		);
+
+		foreach ($actions as $action) {
+			$result->set($action,	$user->authorise($action, $assetName));
+		}
+
+		return $result;
+	}	
+	
+	
+	/**
+	 * Applies the content tag filters to arbitrary text as per settings for current user group
+	 *
+	 * @param   text  $text  The string to filter
+	 *
+	 * @return  string  The filtered string
+	 *
+	 * @deprecated  4.0  Use JComponentHelper::filterText() instead.
+	*/
+	public static function filterText($text)
+	{
+		//JLog::add('ContentHelper::filterText() is deprecated. Use JComponentHelper::filterText() instead.', JLog::WARNING, 'deprecated');
+		return JComponentHelper::filterText($text);
+	}
+	
+}
+<%
+		output.save(path, "o");
+		output.clear();	
+	}
+%>
+##|BODY_END
