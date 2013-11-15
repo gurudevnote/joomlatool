@@ -146,8 +146,8 @@ abstract class JHtml<%=ComponentClassName%>Administrator
 
 		// Array of image, task, title, action
 		$states	= array(
-			0	=> array('unfeatured',	'<%=model.ToLower()%>.featured',	'COM_CONTENT_UNFEATURED',	'COM_CONTENT_TOGGLE_TO_FEATURE'),
-			1	=> array('featured',	'<%=model.ToLower()%>.unfeatured',	'COM_CONTENT_FEATURED',		'COM_CONTENT_TOGGLE_TO_UNFEATURE'),
+			0	=> array('unfeatured',	'<%=model.ToLower()%>.featured',	'<%=ComponentName.ToUpper()%>_UNFEATURED',	'<%=ComponentName.ToUpper()%>_TOGGLE_TO_FEATURE'),
+			1	=> array('featured',	'<%=model.ToLower()%>.unfeatured',	'<%=ComponentName.ToUpper()%>_FEATURED',		'<%=ComponentName.ToUpper()%>_TOGGLE_TO_UNFEATURE'),
 		);
 		$state	= JArrayHelper::getValue($states, (int) $value, $states[1]);
 		$icon	= $state[0];
