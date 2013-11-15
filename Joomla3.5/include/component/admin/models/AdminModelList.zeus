@@ -54,6 +54,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 					string columnName = column.Name.ToLower();
 				%>'<%=columnName%>', 'a.<%=columnName%>',
 				<%}%>
+				'published', 'a.published',
 				'author_id',
 				'category_id',
 				'level',
