@@ -349,7 +349,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 				$query->where('a.<%=primaryKey%> = '.(int) substr($search, 3));
 			}
 			else <%}%>if (stripos($search, 'author:') === 0) {
-				$search = $db->Quote('%'.$db->getEscaped(substr($search, 7), true).'%');
+				$search = $db->Quote('%'.$db->escape(substr($search, 7), true).'%');
 				$query->where('(ua.name LIKE '.$search.' OR ua.username LIKE '.$search.')');
 			}
 			<%
@@ -358,7 +358,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelList
 			{
 			%>
 			else {
-				$search = $db->Quote('%'.$db->getEscaped($search, true).'%');
+				$search = $db->Quote('%'.$db->escape($search, true).'%');
 				$query->where(<%=searchQuery%>);
 			}
 			<%
