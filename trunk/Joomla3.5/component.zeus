@@ -61,6 +61,12 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 
 %><%#FILECOMPILE include/component/admin/models/forms/filter_list.xml.zeus%><%
 
+
+%><%#FILECOMPILE include/component/admin/controllers/AdminControllerFeatured.zeus%><%
+%><%#FILECOMPILE include/AdminControllerList.zeus%><%
+%><%#FILECOMPILE include/AdminControllerEdit.zeus%><%
+
+
 %><%#FILECOMPILE include/component/admin/helpers/AdminHelper.zeus%><%
 %><%#FILECOMPILE include/component/admin/helpers/html/HelperAdministrator.php.zeus%><%
 
@@ -70,9 +76,7 @@ public partial class GeneratedTemplate : DotNetScriptTemplate
 %><%#FILECOMPILE include/AdminModelFieldsEdit.zeus%><%
 
 %><%#FILECOMPILE include/AdminModelFieldsModal.zeus%><%
-%><%#FILECOMPILE include/AdminControllerList.zeus%><%
 %><%#FILECOMPILE include/AdminTable.zeus%><%
-%><%#FILECOMPILE include/AdminControllerEdit.zeus%><%
 //=========================END======================================================
 
 
