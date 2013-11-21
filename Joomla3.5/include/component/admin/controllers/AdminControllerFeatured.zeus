@@ -1,0 +1,115 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE AdminFeaturedController
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateAdminControllerFeatured(string path, string view)
+    {
+        output.clear();
+%><?php
+<?php
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_content
+ *
+ * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+defined('_JEXEC') or die;
+
+require_once __DIR__ . '/<%=view.ToLower()%>.php';
+
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_content
+ */
+class <%=ComponentClassName%>Controller<%=view%>Featured extends <%=ComponentClassName%>Controller<%=view%>
+{
+	/**
+	 * Removes an item
+	 */
+	public function delete()
+	{
+		// Check for request forgeries
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+		$user = JFactory::getUser();
+		$ids  = $this->input->get('cid', array(), 'array');
+
+		// Access checks.
+		foreach ($ids as $i => $id)
+		{
+			if (!$user->authorise('core.delete', '<%=ComponentName%>.<%=GetEditView(view).ToLower()%>.'.(int) $id))
+			{
+				// Prune items that you can't delete.
+				unset($ids[$i]);
+				JError::raiseNotice(403, JText::_('JERROR_CORE_DELETE_NOT_PERMITTED'));
+			}
+		}
+
+		if (empty($ids))
+		{
+			JError::raiseWarning(500, JText::_('JERROR_NO_ITEMS_SELECTED'));
+		}
+		else
+		{
+			// Get the model.
+			$model = $this->getModel();
+
+			// Remove the items.
+			if (!$model->featured($ids, 0))
+			{
+				JError::raiseWarning(500, $model->getError());
+			}
+		}
+
+		$this->setRedirect('index.php?option=com_content&view=featured');
+	}
+
+	/**
+	 * Method to publish a list of articles.
+	 *
+	 * @return  void
+	 * @since   1.0
+	 */
+	public function publish()
+	{
+		parent::publish();
+
+		$this->setRedirect('index.php?option=<%=ComponentName%>&view=featured');
+	}
+
+	/**
+	 * Method to get a model object, loading it if required.
+	 *
+	 * @param   string  $name    The model name. Optional.
+	 * @param   string  $prefix  The class prefix. Optional.
+	 * @param   array   $config  Configuration array for model. Optional.
+	 *
+	 * @return  object  The model.
+	 *
+	 * @since   1.6
+	 */
+	public function getModel($name = 'Feature', $prefix = '<%=ComponentClassName%>Model', $config = array('ignore_request' => true))
+	{
+		$model = parent::getModel($name, $prefix, $config);
+		return $model;
+	}
+}
+<%		
+		output.save(path,"o");
+		output.clear();
+    }
+%>
+##|BODY_END
