@@ -1301,7 +1301,12 @@ public partial class GeneratedTemplate
 			CreateAdminViewTemplateBatch(adminFolder + "\\" + "views\\" + viewLower + "\\tmpl\\default_batch.php", view);
 			CreateAdminViewTemplateListModal(adminFolder + "\\" + "views\\" + viewLower + "\\tmpl\\modal.php", view);
             CreateAdminControllerList(adminFolder + "\\" + "controllers\\" + viewLower + ".php", view);
-			CreateAdminControllerFeatured(adminFolder + "\\" + "controllers\\" + viewLower + "featured.php", view);
+			
+			ITable table = GetTableFromView(view);
+			if(IsContainColumn(table,"featured"))
+			{
+				CreateAdminControllerFeatured(adminFolder + "\\" + "controllers\\" + viewLower + "featured.php", view);
+			}
 			
             CreateFormListFilter(adminFolder + "\\" + "models\\forms\\filter_" + viewLower + ".xml", view);
         }
