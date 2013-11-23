@@ -143,7 +143,7 @@ $assoc		= JLanguageAssociations::isEnabled();
 				foreach(IColumn column in listColumns)
 				{
 					string columnName = column.Name.ToLower();
-					if(!fieldsDisplay.Contains(columnName))
+					if(!fieldsDisplay.Contains(columnName) && listColumns.Count > 10)
 						continue;
 					columnSize++;
 					bool isShowTHTag = true;
@@ -331,7 +331,7 @@ $assoc		= JLanguageAssociations::isEnabled();
 				foreach(IColumn column in listColumns)
 				{				
 					string columnName = column.Name.ToLower();
-					if(!fieldsDisplay.Contains(columnName))
+					if(!fieldsDisplay.Contains(columnName)  && listColumns.Count > 10)
 						continue;
 					if(columnName.Equals("ordering")
 						//|| columnName.Equals(primaryColumnName.ToLower())
