@@ -1,0 +1,51 @@
+﻿##|TYPE Function
+##|UNIQUEID ddd8d8ac-8310-4647-b43e-37e8fa835518
+##|TITLE TableFeatured
+##|NAMESPACE 
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%
+	public void CreateAdminTableFeatured(string path, string model)
+	{		
+		ITable table = GetTableFromView(model);
+		string primaryKey = GetPrimaryColumnName(table).ToLower();
+		output.clear();
+%><?php
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_content
+ *
+ * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+defined('_JEXEC') or die;
+
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_content
+ */
+class <%=ComponentClassName%>TableFeatured extends JTable
+{
+	/**
+	 * @param   JDatabaseDriver  A database connector object
+	 */
+	public function __construct(&$db)
+	{
+		parent::__construct('#__content_frontpage', 'content_id', $db);
+	}
+}
+<%
+		output.save(path, "o");
+		output.clear();		
+	}
+%>
+##|BODY_END
