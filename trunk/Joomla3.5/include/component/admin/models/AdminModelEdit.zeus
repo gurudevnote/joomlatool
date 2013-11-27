@@ -224,11 +224,20 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 	protected function prepareTable(&$table)
 	{
 		// Set the publish date to now
+		$db = $this->getDbo();
 		<%if(IsContainColumn(table,"state") && IsContainColumn(table,"publish_up")){%>
 		if($table->state == 1 && intval($table->publish_up) == 0) {
-			$table->publish_up = JFactory::getDate()->toMySQL();
+			$table->publish_up = JFactory::getDate()->toSql();
 		}
 		<%}%>
+		
+		<%if(IsContainColumn(table,"state") && IsContainColumn(table,"publish_down")){%>
+		if ($table->state == 1 && intval($table->publish_down) == 0)
+		{
+			$table->publish_down = $db->getNullDate();
+		}
+		<%}%>
+		
 		// Increment the content version number.
 		if(isset($table->version))
 		{
@@ -267,20 +276,66 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 	public function getItem($pk = null)
 	{
 		//add some attribute for item
-		if ($item = parent::getItem($pk)) {
+		if ($item = parent::getItem($pk)) {		
+			<%if(IsContainColumn(table,"attribs")){%>
 			// Convert the params field to an array.
-			/*
 			$registry = new JRegistry;
 			$registry->loadString($item->attribs);
-			$item->attribs = $registry->toArray();
+			$item->attribs = $registry->toArray();			
+			<%}%>
 
-			// Convert the params field to an array.
+			<%if(IsContainColumn(table,"metadata")){%>
+			// Convert the metadata field to an array.
 			$registry = new JRegistry;
 			$registry->loadString($item->metadata);
 			$item->metadata = $registry->toArray();
-			*/
-			//$item->articletext = trim($item->fulltext) != '' ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
+			<%}%>
+
+			<%if(IsContainColumn(table,"images")){%>
+			// Convert the images field to an array.
+			$registry = new JRegistry;
+			$registry->loadString($item->images);
+			$item->images = $registry->toArray();
+			<%}%>
+
+			<%if(IsContainColumn(table,"urls")){%>
+			// Convert the urls field to an array.
+			$registry = new JRegistry;
+			$registry->loadString($item->urls);
+			$item->urls = $registry->toArray();
+			<%}%>
+			
+			<%if(IsContainColumn(table,"fulltext") && IsContainColumn(table,"introtext")){%>
+			$item->articletext = trim($item->fulltext) != '' ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
+			<%}%>
+			if (!empty($item->id))
+			{
+				$item->tags = new JHelperTags;
+				$item->tags->getTagIds($item->id, '<%=ComponentName.ToLower()%>.<%=GetEditView(model).ToLower()%>');
+			}
+			<%}%>
 		}
+		
+		<%if(IsContainColumn(table,"language")){%>
+		// Load associated content items
+		$app = JFactory::getApplication();
+		$assoc = JLanguageAssociations::isEnabled();
+
+		if ($assoc)
+		{
+			$item->associations = array();
+
+			if ($item->id != null)
+			{
+				$associations = JLanguageAssociations::getAssociations('com_content', '#__<%=GetTableFromView(model).Name.ToLower()%>', '<%=ComponentName%>.item', $item->id);
+
+				foreach ($associations as $tag => $association)
+				{
+					$item->associations[$tag] = $association->id;
+				}
+			}
+		}
+		<%}%>
 
 		return $item;
 	}
@@ -301,21 +356,41 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 		if (empty($form)) {
 			return false;
 		}
+		$jinput = JFactory::getApplication()->input;
+		
+		// The front end calls this model and uses a_id to avoid id clashes so we need to check for that first.
+		if ($jinput->get('a_id'))
+		{
+			$id = $jinput->get('a_id', 0);
+		}
+		// The back end uses id so we use that the rest of the time and set it to 0 by default.
+		else
+		{
+			$id = $jinput->get('id', 0);
+		}		
 
 		// Determine correct permissions to check.
 		if ($id = (int) $this->getState('<%=model.ToLower()%>.id')) {
+			$id = $this->getState('<%=GetEditView(modal).ToLower()%>.id');
+			<%if(IsContainColumn(table,"catid")){%>
 			// Existing record. Can only edit in selected categories.
 			$form->setFieldAttribute('catid', 'action', 'core.edit');
 			// Existing record. Can only edit own articles in selected categories.
 			$form->setFieldAttribute('catid', 'action', 'core.edit.own');
+			<%}%>
 		}
+		<%if(IsContainColumn(table,"catid")){%>
 		else {
 			// New record. Can only create in selected categories.
 			$form->setFieldAttribute('catid', 'action', 'core.create');
 		}
+		<%}%>
 
+		// Check for existing article.
 		// Modify the form based on Edit State access controls.
-		if (!$this->canEditState((object) $data)) {
+		if ($id != 0 && (!$user->authorise('core.edit.state', '<%=ComponentName.ToLower()%>.<%=GetEditView(modal).ToLower()%>.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('core.edit.state', '<%=ComponentName.ToLower()%>'))
+		)
 			// Disable fields for display.
 			$form->setFieldAttribute('featured', 'disabled', 'true');
 			$form->setFieldAttribute('ordering', 'disabled', 'true');
@@ -331,6 +406,18 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 			$form->setFieldAttribute('publish_down', 'filter', 'unset');
 			$form->setFieldAttribute('state', 'filter', 'unset');
 		}
+		
+		// Prevent messing with article language and category when editing existing article with associations
+		$app = JFactory::getApplication();
+		$assoc = JLanguageAssociations::isEnabled();
+
+		if ($app->isSite() && $assoc && $this->getState('article.id'))
+		{
+			$form->setFieldAttribute('language', 'readonly', 'true');
+			$form->setFieldAttribute('catid', 'readonly', 'true');
+			$form->setFieldAttribute('language', 'filter', 'unset');
+			$form->setFieldAttribute('catid', 'filter', 'unset');
+		}		
 
 		return $form;
 	}
