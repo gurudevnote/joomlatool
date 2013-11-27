@@ -327,7 +327,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 
 			if ($item->id != null)
 			{
-				$associations = JLanguageAssociations::getAssociations('com_content', '#__<%=GetTableFromView(model).Name.ToLower()%>', '<%=ComponentName%>.item', $item->id);
+				$associations = JLanguageAssociations::getAssociations('com_content', '#__<%=table.Name.ToLower()%>', '<%=ComponentName.ToLower()%>.item', $item->id);
 
 				foreach ($associations as $tag => $association)
 				{
@@ -371,7 +371,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 
 		// Determine correct permissions to check.
 		if ($id = (int) $this->getState('<%=model.ToLower()%>.id')) {
-			$id = $this->getState('<%=GetEditView(modal).ToLower()%>.id');
+			$id = $this->getState('<%=GetEditView(model).ToLower()%>.id');
 			<%if(IsContainColumn(table,"catid")){%>
 			// Existing record. Can only edit in selected categories.
 			$form->setFieldAttribute('catid', 'action', 'core.edit');
@@ -388,7 +388,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 
 		// Check for existing article.
 		// Modify the form based on Edit State access controls.
-		if ($id != 0 && (!$user->authorise('core.edit.state', '<%=ComponentName.ToLower()%>.<%=GetEditView(modal).ToLower()%>.' . (int) $id))
+		if ($id != 0 && (!$user->authorise('core.edit.state', '<%=ComponentName.ToLower()%>.<%=GetEditView(model).ToLower()%>.' . (int) $id))
 			|| ($id == 0 && !$user->authorise('core.edit.state', '<%=ComponentName.ToLower()%>'))
 		)
 			// Disable fields for display.
