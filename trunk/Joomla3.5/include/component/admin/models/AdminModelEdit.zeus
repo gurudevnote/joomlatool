@@ -308,6 +308,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 			<%if(IsContainColumn(table,"fulltext") && IsContainColumn(table,"introtext")){%>
 			$item->articletext = trim($item->fulltext) != '' ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
 			<%}%>
+			<%if(IsContainVarcharColumn(table)){%>
 			if (!empty($item->id))
 			{
 				$item->tags = new JHelperTags;
