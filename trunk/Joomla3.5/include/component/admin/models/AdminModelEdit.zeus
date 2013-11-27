@@ -391,7 +391,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 		// Modify the form based on Edit State access controls.
 		if ($id != 0 && (!$user->authorise('core.edit.state', '<%=ComponentName.ToLower()%>.<%=GetEditView(model).ToLower()%>.' . (int) $id))
 			|| ($id == 0 && !$user->authorise('core.edit.state', '<%=ComponentName.ToLower()%>'))
-		)
+		){
 			// Disable fields for display.
 			$form->setFieldAttribute('featured', 'disabled', 'true');
 			$form->setFieldAttribute('ordering', 'disabled', 'true');
