@@ -479,6 +479,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 		return false;
 	}
 
+	<%if(IsContainColumn(table,"featured")){%>
 	/**
 	 * Method to toggle the featured setting of articles.
 	 *
@@ -503,7 +504,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 			$db = $this->getDbo();
 
 			$db->setQuery(
-				'UPDATE #__content AS a' .
+				'UPDATE #__<%=GetTableName(table).ToLower()%> AS a' .
 				' SET a.featured = '.(int) $value.
 				' WHERE a.id IN ('.implode(',', $pks).')'
 			);
@@ -568,6 +569,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 
 		return true;
 	}
+	<%}%>
 
 	/**
 	 * A protected method to get a set of ordering conditions.
