@@ -238,11 +238,13 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 		}
 		<%}%>
 		
+		<%if(IsContainColumn(table,"version")){%>
 		// Increment the content version number.
 		if(isset($table->version))
 		{
 			$table->version++;
 		}
+		<%}%>
 		
 		<%if(IsContainColumn(table,"state") && IsContainColumn(table,"catid")){%>
 		// Reorder the articles within the category so the new article is first
@@ -496,7 +498,6 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 			return false;
 		}
 
-		$table = $this->getTable('Featured', 'ContentTable');
 
 		try {
 			$db = $this->getDbo();
@@ -510,6 +511,9 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 				throw new Exception($db->getErrorMsg());
 			}
 
+			<%
+			//HuyNH comment this code below because featured item in component do not use
+			/**
 			if ((int)$value == 0) {
 				// Adjust the mapping table.
 				// Clear the existing features settings.
@@ -552,13 +556,13 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 					}
 				}
 			}
+			/**/
+			%>
 
 		} catch (Exception $e) {
 			$this->setError($e->getMessage());
 			return false;
 		}
-
-		$table->reorder();
 
 		$this->cleanCache();
 
