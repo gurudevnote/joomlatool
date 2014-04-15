@@ -221,7 +221,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 	 * @return	void
 	 * @since	1.6
 	 */
-	protected function prepareTable(&$table)
+	protected function prepareTable($table)
 	{
 		// Set the publish date to now
 		$db = $this->getDbo();
@@ -388,6 +388,8 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 			$form->setFieldAttribute('catid', 'action', 'core.create');
 		}
 		<%}%>
+		
+		$user = JFactory::getUser();
 
 		// Check for existing article.
 		// Modify the form based on Edit State access controls.
@@ -591,7 +593,7 @@ class <%=ComponentClassName%>Model<%=model%> extends JModelAdmin
 	 *
 	 * @since	1.6
 	 */
-	protected function cleanCache()
+	protected function cleanCache($group = null, $client_id = 0)
 	{
 		parent::cleanCache('<%=ComponentName%>');
 		/*

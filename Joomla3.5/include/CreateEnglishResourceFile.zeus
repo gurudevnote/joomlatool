@@ -57,6 +57,7 @@
 <%=componentNameUpper%>_MANAGER_<%=tableName.ToUpper()%>=Manager <%=tableNameMeaning%>
 <%=componentNameUpper%>_<%=tableName.ToUpper()%>_TITLE=<%=tableNameUpperFirstCharInWord%> Manager: <%=tableNameUpperFirstCharInWord%>
 <%=componentNameUpper%>_<%=tableName.ToUpper()%>_ATTRIBS_FIELDSET_LABEL= <%=tableNameUpperFirstCharInWord%> Options
+<%=componentNameUpper%>_<%=tableName.ToUpper()%>_FIELDSET_PUBLISHING= Publish Options
 <%=componentNameUpper%>_<%=tableName.ToUpper()%>_FIELDSET_RULES=<%=tableNameUpperFirstCharInWord%> Permission
 <%
 		}
