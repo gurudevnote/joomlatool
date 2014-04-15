@@ -216,14 +216,11 @@ endif;
 			<?php echo JHtml::_('bootstrap.endTab'); ?>
 		<?php endif; ?>
 		
-		
 		<?php if ($assoc) : ?>
 			<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'associations', JText::_('JGLOBAL_FIELDSET_ASSOCIATIONS', true)); ?>
 				<?php echo $this->loadTemplate('associations'); ?>
 			<?php echo JHtml::_('bootstrap.endTab'); ?>
-		<?php endif; ?>		
-		
-	</div>
+		<?php endif; ?>			
 	<%
 	if(IsContainColumn(table,"asset_id"))
 	{
@@ -237,6 +234,7 @@ endif;
 	}
 	%>
 	<?php echo JHtml::_('bootstrap.endTabSet'); ?>
+	</div>
 	<div>
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="return" value="<?php echo JRequest::getCmd('return');?>" />
