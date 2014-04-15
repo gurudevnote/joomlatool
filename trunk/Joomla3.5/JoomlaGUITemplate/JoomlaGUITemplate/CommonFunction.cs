@@ -432,6 +432,85 @@ public partial class GeneratedTemplate
             return publishFields;
         }
     }
+	
+	public IList<string> Joomla_edit_global
+	{
+		get 
+        {
+            IList<string> publishFields = new List<string>();
+
+            publishFields.Add("category");
+            publishFields.Add("catid");
+            publishFields.Add("parent");
+            publishFields.Add("tags");
+            publishFields.Add("published");
+            publishFields.Add("state");
+            publishFields.Add("enabled");
+            publishFields.Add("featured");
+            publishFields.Add("sticky");
+			
+			publishFields.Add("access");
+			publishFields.Add("language");
+			publishFields.Add("note");
+			publishFields.Add("version_note");
+            return publishFields;
+        }
+	}
+	
+	public bool IsJoomla_edit_global(string field)
+    {
+        return IsContainItem(field, Joomla_edit_global);
+    }
+	
+	public IList<string> Joomla_edit_publishingdata
+	{
+		get 
+        {
+            IList<string> publishFields = new List<string>();
+
+            publishFields.Add("publish_up");
+            publishFields.Add("publish_down");
+            publishFields.Add("created");
+            publishFields.Add("created_time");
+            publishFields.Add("created_by");
+            publishFields.Add("created_user_id");
+            publishFields.Add("created_by_alias");
+            publishFields.Add("modified");
+            publishFields.Add("modified_time");
+			
+			publishFields.Add("modified_by");
+			publishFields.Add("modified_user_id");
+			publishFields.Add("version");
+			publishFields.Add("hits");
+			publishFields.Add("id");
+            return publishFields;
+        }
+	}
+	
+	public bool IsJoomla_edit_publishingdata(string field)
+    {
+        return IsContainItem(field, Joomla_edit_publishingdata);
+    }
+	
+	public IList<string> Joomla_edit_metadata
+	{
+		get 
+        {
+            IList<string> publishFields = new List<string>();
+
+            publishFields.Add("metadata");
+            publishFields.Add("jmetadata");
+            publishFields.Add("metadesc");
+            publishFields.Add("metakey");
+            publishFields.Add("xreference");
+            return publishFields;
+        }
+	}
+	
+	public bool IsJoomla_edit_metadata(string field)
+    {
+        return IsContainItem(field, Joomla_edit_metadata);
+    }
 
     /// <summary>
     /// file in publish option
@@ -1367,7 +1446,7 @@ public partial class GeneratedTemplate
         //create component file
         //output.clear();
         List<string> adminFiles = null;
-        List<string> siteFiles = null;
+        List<string> siteFiles = null;		
         GetAllFileInDirectory(siteFolder, siteFolder, ref siteFiles);
         GetAllFileInDirectory(adminFolder, adminFolder, ref adminFiles);
         //output.writeln(siteFiles.Count + "");
@@ -1454,8 +1533,9 @@ public partial class GeneratedTemplate
             prefixPath = string.Empty;
         }
         //correct prefixPath
-        prefixPath = Regex.Replace(prefixPath, "\\+", "\\");
-        prefixPath = Regex.Replace(prefixPath, "/+", "\\");
+        prefixPath = Regex.Replace(prefixPath, @"\+", @"\");
+        prefixPath = Regex.Replace(prefixPath, "/+", @"\");
+		prefixPath = Regex.Replace(prefixPath,  @"[\\/]+", @"\");
         if (!prefixPath.EndsWith("\\"))
         {
             prefixPath = prefixPath + "\\";
@@ -1472,13 +1552,13 @@ public partial class GeneratedTemplate
 
         foreach (DirectoryInfo dir in directory.GetDirectories())
         {
-            GetAllFileInDirectory(dir.FullName, prefixPath, ref files);
+            //GetAllFileInDirectory(dir.FullName, prefixPath, ref files);
         }
     }
 
     private List<string> GetAllSubDirectory(string path, string prefixPath)
     {
-        //output.writeln(path);
+        //output.writeln("path:" + path);
         List<string> directories = new List<string>();
 
         if (!Directory.Exists(path))
@@ -1492,8 +1572,11 @@ public partial class GeneratedTemplate
             prefixPath = string.Empty;
         }
         //correct prefixPath
-        prefixPath = Regex.Replace(prefixPath, "\\+", "\\");
-        prefixPath = Regex.Replace(prefixPath, "/+", "\\");
+        prefixPath = Regex.Replace(prefixPath, @"\+", @"\");
+        prefixPath = Regex.Replace(prefixPath, @"/+", @"\");
+		prefixPath = Regex.Replace(prefixPath, @"\/+", @"\");
+		prefixPath = Regex.Replace(prefixPath,@"[\\/]+", @"\");
+		//output.writeln("prefixPath:" + prefixPath);
         if (!prefixPath.EndsWith("\\"))
         {
             prefixPath = prefixPath + "\\";
@@ -1503,7 +1586,9 @@ public partial class GeneratedTemplate
         foreach (DirectoryInfo dir in directory.GetDirectories())
         {
             //GetAllFileInDirectory(dir.FullName, prefixPath, ref files);
-            string dirName = dir.FullName.Replace(prefixPath, string.Empty);
+            string dirName = dir.FullName;		
+			//output.writeln("dirName:" + dirName);
+			dirName = dirName.Replace(prefixPath, string.Empty);
             directories.Add(dirName);
         }
 

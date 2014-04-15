@@ -21,6 +21,7 @@
 		string tableNameForMultipleLang = GetTableNameForMultipleLanguage(table);
 		string primaryKey = GetPrimaryColumnName(table);
 		output.clear();
+		bool isGenerateTileAnAlias = IsContainColumn(table,"alias") && IsContainColumn(table,"title");
 %><?php
 /**
  * @version		$Id: edit.php 22568 2011-12-20 18:25:22Z github_bot $
@@ -38,7 +39,7 @@ JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 <%if(IsContainImageColumn(table))
 {%>
 //HuyNH add CKFinder
-$document = &JFactory::getDocument();
+$document = JFactory::getDocument();
 $document->addScript( JURI::root().'media/editors/ckfinder/ckfinder.js' );
 <%
 }%>
@@ -48,29 +49,32 @@ JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
 
 // Create shortcut to parameters.
-	$params = $this->state->get('params');
+$params = $this->state->get('params');
 
-	$params = $params->toArray();
+$app = JFactory::getApplication();
+$input = $app->input;
+$assoc = JLanguageAssociations::isEnabled();
 
 // This checks if the config options have ever been saved. If they haven't they will fall back to the original settings.
-$editoroptions = isset($params['show_publishing_options']);
+$params = json_decode($params);
+$editoroptions = isset($params->show_publishing_options);
 
 if (!$editoroptions):
-	$params['show_publishing_options'] = '1';
-	$params['show_article_options'] = '1';
-	$params['show_urls_images_backend'] = '0';
-	$params['show_urls_images_frontend'] = '0';
+	$params->show_publishing_options = '1';
+	$params->show_article_options = '1';
+	$params->show_urls_images_backend = '0';
+	$params->show_urls_images_frontend = '0';
 endif;
 
 // Check if the article uses configuration settings besides global. If so, use them.
 if (!empty($this->item->attribs['show_publishing_options'])):
-		$params['show_publishing_options'] = $this->item->attribs['show_publishing_options'];
+		$params->show_publishing_options = $this->item->attribs['show_publishing_options'];
 endif;
 if (!empty($this->item->attribs['show_article_options'])):
-		$params['show_article_options'] = $this->item->attribs['show_article_options'];
+		$params->show_article_options = $this->item->attribs['show_article_options'];
 endif;
 if (!empty($this->item->attribs['show_urls_images_backend'])):
-		$params['show_urls_images_backend'] = $this->item->attribs['show_urls_images_backend'];
+		$params->show_urls_images_backend = $this->item->attribs['show_urls_images_backend'];
 endif;
 
 ?>
@@ -90,15 +94,44 @@ endif;
 </script>
 
 <form action="<?php echo JRoute::_('index.php?option=<%=ComponentName%>&layout=edit&id='.(int) $this->item-><%=primaryKey%>); ?>" method="post" name="adminForm" id="item-form" class="form-validate">
-	<div class="width-60 fltlft">
-		<fieldset class="adminform">
-			<legend><?php echo empty($this->item-><%=primaryKey%>) ? JText::_('<%=ComponentName.ToUpper()%>_NEW_<%=tableName.ToUpper()%>') : JText::sprintf('<%=ComponentName.ToUpper()%>_EDIT_<%=tableName.ToUpper()%>', $this->item-><%=primaryKey%>); ?></legend>
-			<ul class="adminformlist">
+	<%if(isGenerateTileAnAlias)
+	{
+	%>
+	<?php echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
+	<%
+	}
+	%>	
+	<div class="form-horizontal">
+		<?php echo JHtml::_('bootstrap.startTabSet', 'myTab', array('active' => 'details')); ?>
+		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'details', JText::_('Details', true)); ?>
+		<div class="row-fluid">
+			<%
+			string spanclass = "span9";
+			if(IsContainPublishOptionField(table))
+			{
+				spanclass = "span9";
+			}
+			else
+			{
+				spanclass = "span12";
+			}
+			%>
+			<div class="<%=spanclass%>">
 				<%
 				foreach(IColumn col in lisColOrders)
 				{
-					if(IsPublishOptionFields(col.Name)||IsMetadataFields(col.Name)||col.Name.ToLower().Equals("params"))
+					//output.writeln(col.Name);
+					if(
+					//IsPublishOptionFields(col.Name)
+					//||IsMetadataFields(col.Name)
+					//||
+					col.Name.ToLower().Equals("params")
+					||IsJoomla_edit_global(col.Name)
+					||IsJoomla_edit_publishingdata(col.Name)
+					||IsJoomla_edit_metadata(col.Name)
+					)
 					{
+						//output.writeln("publish: " + col.Name);
 						continue;
 					}
 					if(col.Name.ToLower().Equals("asset_id") )
@@ -113,46 +146,31 @@ endif;
 					
 					if(ColumnDataTypeIsText(col)||ColumnDataTypeIsMediumText(col)) //editor
 					{
+						//output.writeln("text: " + col.Name);
 						continue;
 					}
-				%><li><?php echo $this->form->getLabel('<%=col.Name.ToLower()%>'); ?>
-				<?php echo $this->form->getInput('<%=col.Name.ToLower()%>'); ?></li>
+					
+					if(isGenerateTileAnAlias && (col.Name.ToLower().Equals("alias") || col.Name.ToLower().Equals("title")))
+					{
+						continue;
+					}
+					
+				%>
+				<?php echo $this->form->getControlGroup('<%=col.Name.ToLower()%>');?>
 				<%
 				}
-				if(IsContainColumn(table,"params"))
+				if(IsContainColumn(table,"images"))
 				{
 %>
-				<li>
-					<div id="image">
-						<?php foreach($this->form->getFieldset('image') as $field): ?>
-							<?php echo $field->label; ?>
-							<?php echo $field->input; ?>
-						<?php endforeach; ?>
-					</div>
-				</li>
+				<div id="image">
+					<?php echo $this->form->getControlGroup('images'); ?>
+					<?php foreach ($this->form->getGroup('images') as $field) : ?>
+						<?php echo $field->getControlGroup(); ?>
+					<?php endforeach; ?>
+				</div>
 <%
-				}
-				%>
-				
-				<%
-				if(IsContainColumn(table,"asset_id"))
-				{								
-				%>
-				<?php if ($this->canDo->get('core.admin')): ?>
-					<li><span class="faux-label"><?php echo JText::_('JGLOBAL_ACTION_PERMISSIONS_LABEL'); ?></span>
-						<div class="button2-left"><div class="blank">
-							<button type="button" onclick="document.location.href='#access-rules';">
-								<?php echo JText::_('JGLOBAL_PERMISSIONS_ANCHOR'); ?>
-							</button>
-						</div></div>
-					</li>
-				<?php endif; ?>
-				<%
-				}
-				%>
-
-			</ul>
-			<%foreach(IColumn col in table.Columns)			
+				}				
+			foreach(IColumn col in table.Columns)			
 			{
 				if(IsPublishOptionFields(col.Name)||IsMetadataFields(col.Name)||col.Name.ToLower().Equals("params"))
 				{
@@ -165,147 +183,60 @@ endif;
 				else if(ColumnDataTypeIsText(col)||ColumnDataTypeIsMediumText(col)) //editor
 				{
 			%>
-			<div class="clr"></div>
-			<?php echo $this->form->getLabel('<%=col.Name.ToLower()%>'); ?>
-			<div class="clr"></div>
-			<?php echo $this->form->getInput('<%=col.Name.ToLower()%>'); ?>			
+			<div class="form-vertical">
+				<?php echo $this->form->renderField('<%=col.Name.ToLower()%>'); ?>
+			</div>
 			<%
-				}			
+				}
 			}
 			%>
-		</fieldset>
-	</div>
-
-	<div class="width-40 fltrt">
-		<?php echo JHtml::_('sliders.start','content-sliders-'.$this->item-><%=primaryKey%>, array('useCookie'=>1)); ?>
-		<?php // Do not show the publishing options if the edit form is configured not to. ?>
-		<?php  if ($params['show_publishing_options'] || ( $params['show_publishing_options'] = '' && !empty($editoroptions)) ): ?>
+			</div>
 			<%
 			if(IsContainPublishOptionField(table))
 			{
 			%>
-			<?php echo JHtml::_('sliders.panel',JText::_('<%=ComponentName.ToUpper()%>_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
-			<fieldset class="panelform">
-				<ul class="adminformlist">
-				<%
-				foreach(string publishFile in PublishOptionFields)
-				{
-					if(IsContainColumn(table,publishFile))
-					{
-				%><li><?php echo $this->form->getLabel('<%=publishFile.ToLower()%>'); ?>
-				<?php echo $this->form->getInput('<%=publishFile.ToLower()%>'); ?></li>
-				<%	
-					}
-				}
-				%>
-				</ul>
-			</fieldset>
-			<%
-			}
-			%>
-		<?php  endif; ?>
-		<?php  $fieldSets = $this->form->getFieldsets('attribs'); ?>
-			<?php foreach ($fieldSets as $name => $fieldSet) : ?>
-				<?php // If the parameter says to show the article options or if the parameters have never been set, we will
-					  // show the article options. ?>
-
-				<?php if ($params['show_article_options'] || (( $params['show_article_options'] == '' && !empty($editoroptions) ))): ?>
-					<?php // Go through all the fieldsets except the configuration and basic-limited, which are
-						  // handled separately below. ?>
-
-					<?php if ($name != 'editorConfig' && $name != 'basic-limited') : ?>
-						<?php echo JHtml::_('sliders.panel',JText::_($fieldSet->label), $name.'-options'); ?>
-						<?php if (isset($fieldSet->description) && trim($fieldSet->description)) : ?>
-							<p class="tip"><?php echo $this->escape(JText::_($fieldSet->description));?></p>
-						<?php endif; ?>
-						<fieldset class="panelform">
-							<ul class="adminformlist">
-							<?php foreach ($this->form->getFieldset($name) as $field) : ?>
-								<li><?php echo $field->label; ?>
-								<?php echo $field->input; ?></li>
-							<?php endforeach; ?>
-							</ul>
-						</fieldset>
-					<?php endif ?>
-					<?php // If we are not showing the options we need to use the hidden fields so the values are not lost.  ?>
-				<?php  elseif ($name == 'basic-limited'): ?>
-						<?php foreach ($this->form->getFieldset('basic-limited') as $field) : ?>
-							<?php  echo $field->input; ?>
-						<?php endforeach; ?>
-
-				<?php endif; ?>
-			<?php endforeach; ?>
-				<?php // We need to make a separate space for the configuration
-				      // so that those fields always show to those wih permissions ?>
-				<?php if ( $this->canDo->get('core.admin')   ):  ?>
-					<?php  echo JHtml::_('sliders.panel',JText::_('<%=ComponentName.ToUpper()%>_SLIDER_EDITOR_CONFIG'), 'configure-sliders'); ?>
-						<fieldset  class="panelform" >
-							<ul class="adminformlist">
-							<?php foreach ($this->form->getFieldset('editorConfig') as $field) : ?>
-								<li><?php echo $field->label; ?>
-								<?php echo $field->input; ?></li>
-							<?php endforeach; ?>
-							</ul>
-						</fieldset>
-				<?php endif ?>
-
-		<?php // The url and images fields only show if the configuration is set to allow them.  ?>
-		<?php // This is for legacy reasons. ?>
-		<?php if ($params['show_urls_images_backend']): ?>
-			<?php echo JHtml::_('sliders.panel',JText::_('<%=ComponentName.ToUpper()%>_FIELDSET_URLS_AND_IMAGES'), 'urls_and_images-options'); ?>
-				<fieldset class="panelform">
-				<ul class="adminformlist">
-					<li>
-					<?php echo $this->form->getLabel('images'); ?>
-					<?php echo $this->form->getInput('images'); ?></li>
-
-					<?php foreach($this->form->getGroup('images') as $field): ?>
-						<li>
-							<?php if (!$field->hidden): ?>
-								<?php echo $field->label; ?>
-							<?php endif; ?>
-							<?php echo $field->input; ?>
-						</li>
-					<?php endforeach; ?>
-						<?php foreach($this->form->getGroup('urls') as $field): ?>
-						<li>
-							<?php if (!$field->hidden): ?>
-								<?php echo $field->label; ?>
-							<?php endif; ?>
-							<?php echo $field->input; ?>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-				</fieldset>
+			<div class="span3">
+				<?php echo JLayoutHelper::render('joomla.edit.global', $this); ?>
+			</div>
+			<%}%>
+		</div>
+		<?php echo JHtml::_('bootstrap.endTab'); ?>
+		
+		<?php // Do not show the publishing options if the edit form is configured not to. ?>
+		<?php if ($params->show_publishing_options == 1) : ?>
+			<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'publishing', JText::_('<%=ComponentName.ToUpper()%>_<%=tableNameForMultipleLang.ToUpper()%>_FIELDSET_PUBLISHING', true)); ?>
+			<div class="row-fluid form-horizontal-desktop">
+				<div class="span6">
+					<?php echo JLayoutHelper::render('joomla.edit.publishingdata', $this); ?>
+				</div>
+				<div class="span6">
+					<?php echo JLayoutHelper::render('joomla.edit.metadata', $this); ?>
+				</div>
+			</div>
+			<?php echo JHtml::_('bootstrap.endTab'); ?>
 		<?php endif; ?>
-		<?php echo JHtml::_('sliders.panel',JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'), 'meta-options'); ?>
-			<fieldset class="panelform">
-				<?php echo $this->loadTemplate('metadata'); ?>
-			</fieldset>
-		<?php echo JHtml::_('sliders.end'); ?>
+		
+		
+		<?php if ($assoc) : ?>
+			<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'associations', JText::_('JGLOBAL_FIELDSET_ASSOCIATIONS', true)); ?>
+				<?php echo $this->loadTemplate('associations'); ?>
+			<?php echo JHtml::_('bootstrap.endTab'); ?>
+		<?php endif; ?>		
+		
 	</div>
-
-	<div class="clr"></div>
 	<%
 	if(IsContainColumn(table,"asset_id"))
 	{
 	%>
-	<?php if ($this->canDo->get('core.admin')): ?>
-		<div class="width-100 fltlft">
-			<?php echo JHtml::_('sliders.start','permissions-sliders-'.$this->item-><%=primaryKey%>, array('useCookie'=>1)); ?>
-
-				<?php echo JHtml::_('sliders.panel',JText::_('<%=ComponentName.ToUpper()%>_<%=tableNameForMultipleLang.ToUpper()%>_FIELDSET_RULES'), 'access-rules'); ?>
-				<fieldset class="panelform">
-					<?php echo $this->form->getLabel('rules'); ?>
-					<?php echo $this->form->getInput('rules'); ?>
-				</fieldset>
-
-			<?php echo JHtml::_('sliders.end'); ?>
-		</div>
-	<?php endif; ?>
+		<?php if ($this->canDo->get('core.admin')) : ?>
+			<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'permissions', JText::_('<%=ComponentName.ToUpper()%>_<%=tableNameForMultipleLang.ToUpper()%>_FIELDSET_RULES', true)); ?>
+				<?php echo $this->form->getInput('rules'); ?>
+			<?php echo JHtml::_('bootstrap.endTab'); ?>
+		<?php endif; ?>
 	<%
 	}
 	%>
+	<?php echo JHtml::_('bootstrap.endTabSet'); ?>
 	<div>
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="return" value="<?php echo JRequest::getCmd('return');?>" />

@@ -29,12 +29,14 @@
 		foreach(IColumn col in table.Columns)
 		{
 			string classValue = "inputbox";
+			string readonlyAttr = "";
 			string defaultPro = string.Empty;
 			string fieldName = col.Name.ToLower();
 			if(col.IsAutoKey)
 			{
 				classValue = "readonly";
 				defaultPro = "default=\"0\"";
+				readonlyAttr = "readonly=\"true\"";
 			}			
 			int columnLength = GetColumnDataLengh(col);
 			if(columnLength > 45)
@@ -47,7 +49,7 @@
 			{
 %>		
 		<field name="state" type="list" label="JSTATUS"
-			description="JFIELD_PUBLISHED_DESC" class="inputbox"
+			description="JFIELD_PUBLISHED_DESC" class="chzn-color-state"
 			filter="intval" size="1" default="1"
 		>
 			<option value="1">
@@ -256,12 +258,181 @@
 			format="%Y-%m-%d %H:%M:%S" filter="user_utc" />
 <%
 			}
-			else if(fieldName.Contains("image") || fieldName.Contains("file") || fieldName.Contains("path") || fieldName.Contains("picture")  || fieldName.Contains("url"))
+			else if(fieldName.Contains("image") || fieldName.Contains("file") || fieldName.Contains("path") || fieldName.Contains("picture"))
 			{
-%>		<!-- <field name="<%=fieldName%>" type="media" label="<%=fieldName%>" -->
-		<field name="<%=fieldName%>" type="ckfinder" label="<%=fieldName%>"
+%>		<field name="<%=fieldName%>" type="media" label="<%=fieldName%>"		
 			description="<%=fieldName%>" />
+		<!--<field name="<%=fieldName%>" type="ckfinder" label="<%=fieldName%>"-->
 <%			
+			}
+			else if(fieldName.Contains("url") || fieldName.Contains("link"))
+			{
+%>		<field name="<%=fieldName%>" label="<%=fieldName%>"
+			type="url"
+			validate="url"
+			filter="url"
+			description="<%=fieldName%>" />
+		<!--<field name="<%=fieldName%>" type="ckfinder" label="<%=fieldName%>"-->
+<%			
+			}
+			else if(fieldName.Contains("images"))
+			{
+%>
+		<fields name="images" label="COM_CONTENT_FIELD_IMAGE_OPTIONS">
+			<field
+				name="image_intro"
+				type="media"
+				label="COM_CONTENT_FIELD_INTRO_LABEL"
+				description="COM_CONTENT_FIELD_INTRO_DESC" />
+			<field
+				name="float_intro"
+				type="list"
+				label="COM_CONTENT_FLOAT_LABEL"
+				description="COM_CONTENT_FLOAT_DESC">
+					<option value="">JGLOBAL_USE_GLOBAL</option>
+					<option value="right">COM_CONTENT_RIGHT</option>
+					<option value="left">COM_CONTENT_LEFT</option>
+					<option value="none">COM_CONTENT_NONE</option>
+			</field>
+			<field name="image_intro_alt"
+				type="text"
+				label="COM_CONTENT_FIELD_IMAGE_ALT_LABEL"
+				description="COM_CONTENT_FIELD_IMAGE_ALT_DESC"
+				size="20"/>
+			<field name="image_intro_caption"
+				type="text"
+				label="COM_CONTENT_FIELD_IMAGE_CAPTION_LABEL"
+				description="COM_CONTENT_FIELD_IMAGE_CAPTION_DESC"
+				size="20"/>
+			<field
+				name="spacer1"
+				type="spacer"
+				hr="true"
+				/>
+			<field
+				name="image_fulltext"
+				type="media"
+				label="COM_CONTENT_FIELD_FULL_LABEL"
+				description="COM_CONTENT_FIELD_FULL_DESC"/>
+			<field
+				name="float_fulltext"
+				type="list"
+				label="COM_CONTENT_FLOAT_LABEL"
+				description="COM_CONTENT_FLOAT_DESC">
+					<option value="">JGLOBAL_USE_GLOBAL</option>
+					<option value="right">COM_CONTENT_RIGHT</option>
+					<option value="left">COM_CONTENT_LEFT</option>
+					<option value="none">COM_CONTENT_NONE</option>
+			</field>
+			<field name="image_fulltext_alt"
+				type="text"
+				label="COM_CONTENT_FIELD_IMAGE_ALT_LABEL"
+				description="COM_CONTENT_FIELD_IMAGE_ALT_DESC"
+				size="20"/>
+			<field name="image_fulltext_caption"
+				type="text"
+				label="COM_CONTENT_FIELD_IMAGE_CAPTION_LABEL"
+				description="COM_CONTENT_FIELD_IMAGE_CAPTION_DESC"
+				size="20"/>
+		</fields>
+<%
+			}
+			else if(fieldName.Contains("urls"))
+			{
+%>
+		<fields name="urls" label="COM_CONTENT_FIELD_URLS_OPTIONS">
+			<field
+				name="urla"
+				type="url"
+				validate="url"
+				filter="url"
+				label="COM_CONTENT_FIELD_URLA_LABEL"
+				description="COM_CONTENT_FIELD_URL_DESC" />
+			<field name="urlatext"
+				type="text"
+				label="COM_CONTENT_FIELD_URLA_LINK_TEXT_LABEL"
+				description="COM_CONTENT_FIELD_URL_LINK_TEXT_DESC"
+				size="20"/>
+			<field
+				name="targeta"
+				type="list"
+				label="COM_CONTENT_URL_FIELD_BROWSERNAV_LABEL"
+				description="COM_CONTENT_URL_FIELD_BROWSERNAV_DESC"
+				default=""
+				filter="options"
+				>
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option value="0">JBROWSERTARGET_PARENT</option>
+				<option value="1">JBROWSERTARGET_NEW</option>
+				<option value="2">JBROWSERTARGET_POPUP</option>
+				<option value="3">JBROWSERTARGET_MODAL</option>
+			</field>
+			<field
+				name="spacer3"
+				type="spacer"
+				hr="true"
+				/>
+			<field
+				name="urlb"
+				type="url"
+				validate="url"
+				filter="url"
+				label="COM_CONTENT_FIELD_URLB_LABEL"
+				description="COM_CONTENT_FIELD_URL_DESC"/>
+			<field name="urlbtext"
+				type="text"
+				label="COM_CONTENT_FIELD_URLB_LINK_TEXT_LABEL"
+				description="COM_CONTENT_FIELD_URL_LINK_TEXT_DESC"
+				size="20"/>
+			<field
+				name="targetb"
+				type="list"
+				label="COM_CONTENT_URL_FIELD_BROWSERNAV_LABEL"
+				description="COM_CONTENT_URL_FIELD_BROWSERNAV_DESC"
+				default=""
+				filter="options"
+				>
+					<option value="">JGLOBAL_USE_GLOBAL</option>
+					<option value="0">JBROWSERTARGET_PARENT</option>
+					<option value="1">JBROWSERTARGET_NEW</option>
+					<option value="2">JBROWSERTARGET_POPUP</option>
+					<option value="3">JBROWSERTARGET_MODAL</option>
+			</field>
+			<field
+				name="spacer4"
+				type="spacer"
+				hr="true"
+				/>
+			<field
+				name="urlc"
+				type="url"
+				validate="url"
+				filter="url"
+				label="COM_CONTENT_FIELD_URLC_LABEL"
+				description="COM_CONTENT_FIELD_URL_DESC"/>
+			<field
+				name="urlctext"
+				type="text"
+				label="COM_CONTENT_FIELD_URLC_LINK_TEXT_LABEL"
+				description="COM_CONTENT_FIELD_URL_LINK_TEXT_DESC"
+				size="20"/>
+			<field
+				name="targetc"
+				type="list"
+				label="COM_CONTENT_URL_FIELD_BROWSERNAV_LABEL"
+				description="COM_CONTENT_URL_FIELD_BROWSERNAV_DESC"
+				default=""
+				filter="options"
+				>
+					<option value="">JGLOBAL_USE_GLOBAL</option>
+					<option value="0">JBROWSERTARGET_PARENT</option>
+					<option value="1">JBROWSERTARGET_NEW</option>
+					<option value="2">JBROWSERTARGET_POPUP</option>
+					<option value="3">JBROWSERTARGET_MODAL</option>
+			</field>
+
+		</fields>
+<%
 			}
 			else if(fieldName.Contains("location"))
 			{
@@ -285,7 +456,7 @@
 				commentInputtype = defaultType.Replace("Modal_","") + "Edit";
 			}
 %>		<field name="<%=fieldName%>" type="<%=defaultType%>" label="<%=fieldName%>"
-			description="<%=fieldName%>" class="<%=classValue%>" size="<%=columnLength.ToString()%>"  <%=defaultPro%>/>
+			description="<%=fieldName%>" class="<%=classValue%>" size="<%=columnLength.ToString()%>" <%=readonlyAttr%>  <%=defaultPro%>/>
 <%				
 			}			
 		}
@@ -549,26 +720,29 @@ if(IsContainColumn(table,"publish_up"))
 
 		</fieldset>
 	</fields>
-	<fields name="metadata">
-		<field name="robots"
-			type="list"
-			label="JFIELD_METADATA_ROBOTS_LABEL"
-			description="JFIELD_METADATA_ROBOTS_DESC"
-		>
-			<option value="">JGLOBAL_USE_GLOBAL</option>
-			<option value="index, follow">JGLOBAL_INDEX_FOLLOW</option>
-			<option value="noindex, follow">JGLOBAL_NOINDEX_FOLLOW</option>
-			<option value="index, nofollow">JGLOBAL_INDEX_NOFOLLOW</option>
-			<option value="noindex, nofollow">JGLOBAL_NOINDEX_NOFOLLOW</option>
-		</field>
+	<fields name="metadata" label="JGLOBAL_FIELDSET_METADATA_OPTIONS">
+		<fieldset name="jmetadata"
+			label="JGLOBAL_FIELDSET_METADATA_OPTIONS">
 
-		<field name="author" type="text"
-			label="JAUTHOR" description="JFIELD_METADATA_AUTHOR_DESC"
-			size="20" />
+			<field name="robots"
+				type="list"
+				label="JFIELD_METADATA_ROBOTS_LABEL"
+				description="JFIELD_METADATA_ROBOTS_DESC"
+				>
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option value="index, follow">JGLOBAL_INDEX_FOLLOW</option>
+				<option value="noindex, follow">JGLOBAL_NOINDEX_FOLLOW</option>
+				<option value="index, nofollow">JGLOBAL_INDEX_NOFOLLOW</option>
+				<option value="noindex, nofollow">JGLOBAL_NOINDEX_NOFOLLOW</option>
+			</field>
 
-		<field name="rights" type="textarea" label="JFIELD_META_RIGHTS_LABEL"
-			description="JFIELD_META_RIGHTS_DESC" required="false" filter="string"
-			cols="30" rows="2" />
+			<field name="author" type="text"
+				label="JAUTHOR" description="JFIELD_METADATA_AUTHOR_DESC"
+				size="20" />
+
+			<field name="rights" type="textarea" label="JFIELD_META_RIGHTS_LABEL"
+				description="JFIELD_META_RIGHTS_DESC" required="false" filter="string"
+				cols="30" rows="2" />
 <%if(IsContainColumn(table,"xreference"))
 {%>			
 		<field name="xreference" type="text"
@@ -576,7 +750,8 @@ if(IsContainColumn(table,"publish_up"))
 			description="JFIELD_KEY_REFERENCE_DESC" 
 			class="inputbox" size="20" />
 
-<%}%>
+<%}
+%>
 <%foreach(string field in MetadataOptionFields){
 	if(IsContainColumn(table,field))
 	{
@@ -585,6 +760,7 @@ if(IsContainColumn(table,"publish_up"))
 			cols="30" rows="2" /><%
 	}
 }%>
+		</fieldset>
 	</fields>
 </form>
 <%
